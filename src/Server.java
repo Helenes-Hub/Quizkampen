@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class Server {
-    //Bör denna kallas för Server?
 
     private final int port = 5050;
 
@@ -10,11 +9,12 @@ public class Server {
 
         try(ServerSocket serverS = new ServerSocket(port)) {
             while (true) {
-                GameFlow player1 = new GameFlow(serverS.accept());
-                GameFlow player2 = new GameFlow(serverS.accept());
 
-                player1.start();
-                player2.start();
+                Player player1 = new Player(serverS.accept());
+                Player player2 = new Player(serverS.accept());
+                GameFlow gf = new GameFlow(player1, player2);
+
+                gf.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
