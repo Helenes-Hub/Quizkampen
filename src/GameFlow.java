@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
+//Gameflow tar nu in spelare, sätter motståndare och har en variabel för att hålla koll på vems tur det är.
+//Är trådad och har run() men behöver uppdateras.
 public class GameFlow extends Thread {
 
     private Player player1;

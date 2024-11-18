@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-//Spelklass som sköter in och utströmmar och skapar spelare till GameFlow
+//Spelarklass som sköter in och utströmmar och skapar spelare till GameFlow
 public class Player {
 
     Player opponent;
