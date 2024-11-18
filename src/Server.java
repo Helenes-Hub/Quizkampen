@@ -1,20 +1,20 @@
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
-public class ServerListener {
+public class Server {
     //Bör denna kallas för Server?
 
     private final int port = 5050;
 
-    public ServerListener() {
+    public Server() {
 
         try(ServerSocket serverS = new ServerSocket(port)) {
             while (true) {
-                Socket socket = serverS.accept();
+                GameFlow player1 = new GameFlow(serverS.accept());
+                GameFlow player2 = new GameFlow(serverS.accept());
 
-                GameFlow gf = new GameFlow(socket);
-                gf.start();
+                player1.start();
+                player2.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -22,6 +22,6 @@ public class ServerListener {
     }
 
     public static void main(String[] args) {
-        ServerListener serverL = new ServerListener();
+        Server server = new Server();
     }
 }
