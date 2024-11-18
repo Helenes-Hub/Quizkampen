@@ -15,6 +15,8 @@ public class Client {
              PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));) {
 
+            //KOD
+
 
         } catch (IOException e) {
             e.printStackTrace();
