@@ -1,6 +1,6 @@
 import java.io.IOException;
 import java.net.ServerSocket;
-
+//Servern ser till att klienter blir spelare och skapar kontakt mellan klient och server samt startar ett spel
 public class Server {
 
     private final int port = 5050;
@@ -12,9 +12,9 @@ public class Server {
 
                 Player player1 = new Player(serverS.accept());
                 Player player2 = new Player(serverS.accept());
-                GameFlow gf = new GameFlow(player1, player2);
+                GameFlow game = new GameFlow(player1, player2);
 
-                gf.start();
+                game.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
