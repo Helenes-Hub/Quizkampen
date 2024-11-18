@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-
+//Start på klassen. Skapar writers, readers och kopplar upp socket med port och adress.
 public class Client {
 
     private final int port = 5050;
