@@ -1,8 +1,15 @@
+import java.net.Socket;
 import java.util.List;
 
-public class GameFlow {
+public class GameFlow extends Thread {
 
-    public GameFlow() {
+    Socket socket;
+
+    public GameFlow(Socket socket){
+        this.socket = socket;
+    }
+
+    public void run() {
 
         String questionText;
         String correctAnswer;
@@ -36,10 +43,6 @@ public class GameFlow {
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-        new GameFlow();
     }
 }
 
