@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
@@ -15,34 +19,41 @@ public class GameFlow extends Thread {
         String correctAnswer;
         List<String> options;
 
-        //JButton input på vilket tema som är valt
-        String användarVal="ANIMALS";
+        try(PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))){
 
-        ClassMaker selectedCategory = ClassMaker.valueOf(användarVal);
-        List<QuestionClass> questions = selectedCategory.getQuestions();
-        System.out.println(questions.get(0).getCorrectAnswer());
 
-        for (QuestionClass question : questions) {
-            options = question.getOptions();
-            questionText = question.getQuestion();
-            correctAnswer = question.getCorrectAnswer();
-            //for (int i = 0; i < options.size(); i++) {
-            //    System.out.println((i + 1) + ". " + options.get(i));
-            //}
+            //JButton input på vilket tema som är valt
+            String användarVal="ANIMALS";
 
-            String userAnswer = "JButton text.valueOf";
+            ClassMaker selectedCategory = ClassMaker.valueOf(användarVal);
+            List<QuestionClass> questions = selectedCategory.getQuestions();
+            System.out.println(questions.get(0).getCorrectAnswer());
 
-            //System.out.println(questionText);
-            //System.out.println(options);
-            //System.out.println(correctAnswer);
+            for (QuestionClass question : questions) {
+                options = question.getOptions();
+                questionText = question.getQuestion();
+                correctAnswer = question.getCorrectAnswer();
+                //for (int i = 0; i < options.size(); i++) {
+                //    System.out.println((i + 1) + ". " + options.get(i));
+                //}
 
-            if (userAnswer.equals(question.getCorrectAnswer())) {
-                System.out.println("Yasss poäng!");
-            } else {
-                System.out.println("Fel, inga poäng ");
+                String userAnswer = "JButton text.valueOf";
+
+                //System.out.println(questionText);
+                //System.out.println(options);
+                //System.out.println(correctAnswer);
+
+                if (userAnswer.equals(question.getCorrectAnswer())) {
+                    System.out.println("Yasss poäng!");
+                } else {
+                    System.out.println("Fel, inga poäng ");
+                }
             }
-        }
 
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
 
