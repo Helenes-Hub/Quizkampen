@@ -6,6 +6,10 @@ import java.util.Properties;
 public class GameFlow {
 
     public GameFlow() {
+        int timer=0;
+        int rounds=0;
+        int questionsPerRound=0;
+
 
 //-----properties load and set start
         Properties p = new Properties();
@@ -17,11 +21,10 @@ public class GameFlow {
             System.out.println("filen hittades inte");
         }
 
-        int timer= Integer.parseInt(p.getProperty("timer", "10"));
-        int rounds = Integer.parseInt(p.getProperty("rounds", "4"));
-        int questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
+        timer= Integer.parseInt(p.getProperty("timer", "10"));
+        rounds = Integer.parseInt(p.getProperty("rounds", "4"));
+        questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
 
-        System.out.println("timer: "+timer+" rounds: "+rounds+" questionsPerRound: "+questionsPerRound);
         //----properties load and set end
 
         String questionText;
