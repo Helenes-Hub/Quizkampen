@@ -10,8 +10,7 @@ public class GameFlow {
         int rounds=0;
         int questionsPerRound=0;
 
-
-//-----properties load and set start
+        //-----properties load and set start
         Properties p = new Properties();
         try{
             p.load(new FileInputStream("src/Settings.properties"));
@@ -46,15 +45,10 @@ public class GameFlow {
             options = question.getOptions();
             questionText = question.getQuestion();
             correctAnswer = question.getCorrectAnswer();
-            //for (int i = 0; i < options.size(); i++) {
-            //    System.out.println((i + 1) + ". " + options.get(i));
-            //}
+
+
 
             String userAnswer = "JButton text.valueOf";
-
-            //System.out.println(questionText);
-            //System.out.println(options);
-            //System.out.println(correctAnswer);
 
             if (userAnswer.equals(question.getCorrectAnswer())) {
                 System.out.println("Yasss poäng!");
