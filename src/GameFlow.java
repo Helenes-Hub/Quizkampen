@@ -4,6 +4,8 @@ public class GameFlow {
 
     public GameFlow() {
 
+        GamePanel  gamePanel = new GamePanel();
+
         String questionText;
         String correctAnswer;
         List<String> options;
