@@ -26,6 +26,8 @@ public class GameFlow {
 
         //----properties load and set end
 
+        GamePanel  gamePanel = new GamePanel();
+
         String questionText;
         String correctAnswer;
         List<String> options;
