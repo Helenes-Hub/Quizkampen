@@ -1,8 +1,28 @@
+import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 public class GameFlow {
 
     public GameFlow() {
+
+//-----properties load and set start
+        Properties p = new Properties();
+        try{
+            p.load(new FileInputStream("src/Settings.properties"));
+        }
+
+        catch (Exception e) {
+            System.out.println("filen hittades inte");
+        }
+
+        int timer= Integer.parseInt(p.getProperty("timer", "10"));
+        int rounds = Integer.parseInt(p.getProperty("rounds", "4"));
+        int questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
+
+        System.out.println("timer: "+timer+" rounds: "+rounds+" questionsPerRound: "+questionsPerRound);
+        //----properties load and set end
 
         String questionText;
         String correctAnswer;
@@ -11,9 +31,13 @@ public class GameFlow {
         //JButton input på vilket tema som är valt
         String användarVal="ANIMALS";
 
-        ClassMaker selectedCategory = ClassMaker.valueOf(användarVal);
-        List<QuestionClass> questions = selectedCategory.getQuestions();
-        System.out.println(questions.get(0).getCorrectAnswer());
+        //hämtar in listan med alla frågor i temat, shufflar
+        List<QuestionClass> allThemedQuestions= ClassMaker.valueOf(användarVal).getQuestions();
+        Collections.shuffle(allThemedQuestions);
+
+        //hämtar ut de första shufflade frågorna med antal questionsPerRound
+        List<QuestionClass> questions=allThemedQuestions.subList(0, questionsPerRound);
+
 
         for (QuestionClass question : questions) {
             options = question.getOptions();
