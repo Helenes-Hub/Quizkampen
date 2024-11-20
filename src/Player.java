@@ -7,8 +7,13 @@ import java.net.Socket;
 //Spelarklass som sköter in och utströmmar och skapar spelare till GameFlow
 public class Player {
 
+    BufferedReader in;
+    PrintWriter out;
     Player opponent;
     Socket socket;
+    String username;
+    int pointsThisRound;
+    int[] pointsAllRounds;
 
     public Player(Socket socket) {
         this.socket = socket;
@@ -21,9 +26,27 @@ public class Player {
         } catch (IOException e){
             e.printStackTrace();
         }
+
+
+    }
+    public void send(String message){
+        out.println(message);
+    }
+
+    public String receive()  {
+        try {
+            return in.readLine();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void setOpponent(Player opponent) {
         this.opponent = opponent;
+    }
+
+    public void setRounds(int rounds) {
+        pointsAllRounds = new int[rounds];
     }
 }
