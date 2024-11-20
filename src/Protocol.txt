@@ -2,8 +2,12 @@
 INITIAL
 Välkommen och lägg in username
 
-INTHEGAME
+CHOOSE CATEGORY
+
+QUIZZING
 Frågor, rondresultat
+
+WAITING
 
 GAMEFINISHED
 Spelresultat, meddelanden om vinst och förlust
