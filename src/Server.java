@@ -9,7 +9,6 @@ public class Server {
 
         try(ServerSocket serverS = new ServerSocket(port)) {
             while (true) {
-
                 Player player1 = new Player(serverS.accept());
                 Player player2 = new Player(serverS.accept());
                 GameFlow game = new GameFlow(player1, player2);

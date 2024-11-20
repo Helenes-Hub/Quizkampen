@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -11,6 +13,8 @@ public class GameFlow extends Thread {
     private Player player1;
     private Player player2;
     private Player currentPlayer;
+    String messageIn="";
+    String messageOut="";
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -40,10 +44,13 @@ public class GameFlow extends Thread {
 
 
     public void run() {
+        System.out.println("1");
+        messageIn=currentPlayer.receive();
+        System.out.println(messageIn);
+        System.out.println("2");
+        currentPlayer.send(messageIn);
+        System.out.println("3");
 
-        //----properties load and set end
-
-        GamePanel gamePanel = new GamePanel();
 
     }
 

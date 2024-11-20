@@ -17,25 +17,27 @@ public class Player {
 
     public Player(Socket socket) {
         this.socket = socket;
-
-        try(PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))){
-
-            //KOD
-
-        } catch (IOException e){
+        try {
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to initialize Player streams", e);
         }
 
 
     }
     public void send(String message){
-        out.println(message);
+        out.println(message+ "\n");
     }
 
     public String receive()  {
         try {
-            return in.readLine();
+            String message = in.readLine();
+            if(message!=null){
+                return message;
+            }
+            return "failed to read message";
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
