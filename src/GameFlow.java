@@ -3,9 +3,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class GameFlow {
+public class GameFlow extends Thread {
 
-    public GameFlow() {
+    private Player player1;
+    private Player player2;
+    private Player currentPlayer;
+
+    public GameFlow(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+
+        this.currentPlayer = player1;
+
+        this.player1.setOpponent(player2);
+        this.player2.setOpponent(player1);
+    }
+
+    public void run() {
         int timer=0;
         int rounds=0;
         int questionsPerRound=0;
@@ -59,10 +73,6 @@ public class GameFlow {
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-        new GameFlow();
     }
 }
 
