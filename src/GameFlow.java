@@ -5,7 +5,6 @@ import java.util.Properties;
 
 public class GameFlow extends Thread {
 
-
     private int timer;
     private int questionsPerRound;
     private int rounds;
@@ -21,55 +20,47 @@ public class GameFlow extends Thread {
 
         this.player1.setOpponent(player2);
         this.player2.setOpponent(player1);
-    }
 
         //loading properties
         Properties p = new Properties();
-        try{
+        try {
             p.load(new FileInputStream("src/Settings.properties"));
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("filen hittades inte");
         }
 
-        this.timer= Integer.parseInt(p.getProperty("timer", "10"));
+        this.timer = Integer.parseInt(p.getProperty("timer", "10"));
         this.rounds = Integer.parseInt(p.getProperty("rounds", "4"));
         this.questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
-
-
-    }
-
-    public void run() {
 
         player1.setRounds(rounds);
         player2.setRounds(rounds);
 
+    }
+
+
+    public void run() {
+
         //----properties load and set end
 
-        GamePanel  gamePanel = new GamePanel();
+        GamePanel gamePanel = new GamePanel();
 
     }
 
-    public List<QuestionClass> getQuestions(String userThemeChoice){
-        List<QuestionClass> allThemedQuestions= ClassMaker.valueOf(userThemeChoice).getQuestions();
+    public List<QuestionClass> getQuestions(String userThemeChoice) {
+        List<QuestionClass> allThemedQuestions = ClassMaker.valueOf(userThemeChoice).getQuestions();
         Collections.shuffle(allThemedQuestions);
 
-        List<QuestionClass> questions=allThemedQuestions.subList(0, this.questionsPerRound);
+        List<QuestionClass> questions = allThemedQuestions.subList(0, this.questionsPerRound);
         return questions;
     }
 
-    public boolean winchecker(String userAnswer, String correctAnswer)
-    {
+    public boolean winchecker(String userAnswer, String correctAnswer) {
         if (userAnswer.equals(correctAnswer)) {
             return true;
         }
         return false;
     }
-
-
 }
-
-
 
 
