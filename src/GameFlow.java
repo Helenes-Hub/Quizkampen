@@ -47,7 +47,8 @@ public class GameFlow extends Thread {
 
     }
 
-    public List<QuestionClass> getQuestions(String userThemeChoice) {
+    public List<QuestionClass> getQuestions() {
+        String userThemeChoice = currentPlayer.getThemeChoice();
         List<QuestionClass> allThemedQuestions = ClassMaker.valueOf(userThemeChoice).getQuestions();
         Collections.shuffle(allThemedQuestions);
 

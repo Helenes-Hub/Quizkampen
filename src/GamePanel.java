@@ -2,6 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
@@ -21,8 +26,23 @@ public class GamePanel extends JFrame implements ActionListener {
     private int score;
     private List<QuestionClass> questions;
 
+    Socket socket;
+    String messageOut="";
+    String messageIn="";
+    PrintWriter out;
+    BufferedReader in;
 
-    public GamePanel() {
+    public GamePanel(){
+
+        try {
+            socket = new Socket("127.0.0.1",5050);
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("fel vid writer/reader initialisering", e);
+        }
+
         setTitle("Quiz");
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,6 +128,15 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGame(ClassMaker category) {
+
+        messageOut="hehehe";
+        System.out.println("1");
+        send(messageOut);
+        System.out.println("2");
+        messageIn=receive();
+        System.out.println("3");
+        System.out.println(messageIn);
+        System.out.println("4");
 
         questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -196,6 +225,23 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setText(options.get(3));
     }
 
+    public void send(String message){
+        out.println(message + "\n");
+    }
+
+    public String receive(){
+        try {
+            String message = in.readLine();
+            if(message!=null){
+                return message;
+            }
+            return "failed to read message";
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     private void endGame() {
         getContentPane().removeAll();
         revalidate();
@@ -218,6 +264,11 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreField.setBorder(null);
         scoreField.setBounds(200, 300, 300, 100);
         scoreField.setText("Score: " + score + "/" + questions.size());
+
+    }
+
+    public static void main(String[] args) {
+            new GamePanel();
 
     }
 }
