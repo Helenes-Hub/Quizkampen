@@ -1,0 +1,20 @@
+
+
+Spelet startas, spelare får ange namn (uppkoppling skett)
+
+Spelare1 får välja kategori
+
+Spelare1 får svara på frågor och se sitt resultat
+
+Spelare2 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
+
+Spelare2 får välja kategori.
+
+Spelare2 får svara på frågor och se sitt resultat
+
+Spelare1 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
+
+Visa spelresultat, vinst- och förlustmeddelanden skickas
+
+
+
