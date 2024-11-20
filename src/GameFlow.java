@@ -29,7 +29,7 @@ public class GameFlow extends Thread {
         }
 
         catch (Exception e) {
-            System.out.println("filen hittades inte");
+            System.out.println("filen hittades inte"+e.getMessage());
         }
 
         this.timer= Integer.parseInt(p.getProperty("timer", "10"));
