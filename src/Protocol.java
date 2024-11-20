@@ -8,7 +8,7 @@ public class Protocol {
 
     protected int state = INITIAL;
 
-    //Denna metod behöver skrivas om
+    //Denna metod behöver ordnas för fler och så rätt saker skickas
     public String getOutput(int state) {
         if (state == INITIAL) {
             state = CHOOSE_CATEGORY;
