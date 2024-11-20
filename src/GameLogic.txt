@@ -1,0 +1,25 @@
+Spelet startas, spelare får ange namn (uppkoppling skett)
+Client kopplar upp till spel vid start av program:
+Client ansluter till Server.
+Server skapar Player och startar GameFlow.
+GameFlow anropar GamePanel och skickar (via var?) startrutan med välkomstmeddelande och username-efterfrågan.
+
+
+Spelare1 får välja kategori
+När två spelare kopplat upp börjar spelet
+Server starar en tråd av GameFlow med nytt spel.
+GameFlow anropar GamePanel som skickar kategorialternativ
+Sparar Spelare1s val.
+
+Spelare1 får svara på frågor och se sitt resultat
+
+
+Spelare2 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
+
+Spelare2 får välja kategori.
+
+Spelare2 får svara på frågor och se sitt resultat
+
+Spelare1 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
+
+Visa spelresultat, vinst- och förlustmeddelanden skickas

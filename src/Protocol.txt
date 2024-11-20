@@ -1,18 +1,12 @@
 
-Spelet startas, spelare får ange namn (uppkoppling skett)
+INITIAL
+Välkommen och lägg in username
 
-Spelare1 får välja kategori
+INTHEGAME
+Frågor, rondresultat
 
-Spelare1 får svara på frågor och se sitt resultat
+GAMEFINISHED
+Spelresultat, meddelanden om vinst och förlust
 
-Spelare2 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
-
-Spelare2 får välja kategori.
-
-Spelare2 får svara på frågor och se sitt resultat
-
-Spelare1 får svara på frågor från samma kategori och bådas resultat för ronden och tidigare ronder visas.
-
-Visa spelresultat, vinst- och förlustmeddelanden skickas
 
 
