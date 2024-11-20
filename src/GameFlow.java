@@ -1,56 +1,56 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
-//Gameflow tar nu in spelare, sätter motståndare och har en variabel för att hålla koll på vems tur det är.
-//Är trådad och har run() men behöver uppdateras.
-public class GameFlow extends Thread {
+public class GameFlow {
 
-    private Player player1;
-    private Player player2;
-    private Player currentPlayer;
+    public GameFlow() {
+        int timer=0;
+        int rounds=0;
+        int questionsPerRound=0;
 
-    public GameFlow(Player player1, Player player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+        //-----properties load and set start
+        Properties p = new Properties();
+        try{
+            p.load(new FileInputStream("src/Settings.properties"));
+        }
 
-        currentPlayer = player1;
+        catch (Exception e) {
+            System.out.println("filen hittades inte");
+        }
 
-        this.player1.setOpponent(player2);
-        this.player2.setOpponent(player1);
+        timer= Integer.parseInt(p.getProperty("timer", "10"));
+        rounds = Integer.parseInt(p.getProperty("rounds", "4"));
+        questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
 
-    }
+        //----properties load and set end
 
-    public void run() {
+        GamePanel  gamePanel = new GamePanel();
 
         String questionText;
         String correctAnswer;
         List<String> options;
 
-
         //JButton input på vilket tema som är valt
-        String användarVal = "ANIMALS";
+        String användarVal="ANIMALS";
 
-        ClassMaker selectedCategory = ClassMaker.valueOf(användarVal);
-        List<QuestionClass> questions = selectedCategory.getQuestions();
-        System.out.println(questions.get(0).getCorrectAnswer());
+        //hämtar in listan med alla frågor i temat, shufflar
+        List<QuestionClass> allThemedQuestions= ClassMaker.valueOf(användarVal).getQuestions();
+        Collections.shuffle(allThemedQuestions);
+
+        //hämtar ut de första shufflade frågorna med antal questionsPerRound
+        List<QuestionClass> questions=allThemedQuestions.subList(0, questionsPerRound);
+
 
         for (QuestionClass question : questions) {
             options = question.getOptions();
             questionText = question.getQuestion();
             correctAnswer = question.getCorrectAnswer();
-            //for (int i = 0; i < options.size(); i++) {
-            //    System.out.println((i + 1) + ". " + options.get(i));
-            //}
+
+
 
             String userAnswer = "JButton text.valueOf";
-
-            //System.out.println(questionText);
-            //System.out.println(options);
-            //System.out.println(correctAnswer);
 
             if (userAnswer.equals(question.getCorrectAnswer())) {
                 System.out.println("Yasss poäng!");
@@ -59,6 +59,10 @@ public class GameFlow extends Thread {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+        new GameFlow();
     }
 }
 
