@@ -9,6 +9,7 @@ public class GameFlow extends Thread {
     private Player player2;
     private Player currentPlayer;
 
+
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
@@ -20,8 +21,8 @@ public class GameFlow extends Thread {
     }
 
     public void run() {
-        int timer=0;
-        int rounds=0;
+        int timer;
+        int rounds;
         int questionsPerRound=0;
 
         //-----properties load and set start
@@ -37,6 +38,9 @@ public class GameFlow extends Thread {
         timer= Integer.parseInt(p.getProperty("timer", "10"));
         rounds = Integer.parseInt(p.getProperty("rounds", "4"));
         questionsPerRound = Integer.parseInt(p.getProperty("questionsPerRound", "4"));
+
+        player1.setRounds(rounds);
+        player2.setRounds(rounds);
 
         //----properties load and set end
 
