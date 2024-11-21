@@ -1,18 +1,22 @@
 public class Protocol {
-    protected final int INITIAL = 0;
-    protected final int CHOOSE_CATEGORY = 1;
-    protected final int QUIZZING = 2;
-    protected final int WAITING = 3;
-    protected final int SHOW_SCORE_THIS_ROUND = 4;
-    protected final int FINAL = 5;
+    protected static final int INITIAL = 0;
+    protected static final int ENTER_USERNAME = 1;
+    protected static final int CHOOSE_CATEGORY = 2;
+    protected static final int QUIZZING = 3;
+    protected static final int WAITING = 4;
+    protected static final int SHOW_SCORE_THIS_ROUND = 5;
+    protected static final int FINAL = 6;
 
     protected int state = INITIAL;
 
     //Denna metod behöver ordnas för fler och så rätt saker skickas
     public String getOutput(int state) {
         if (state == INITIAL) {
-            state = CHOOSE_CATEGORY;
+            state = ENTER_USERNAME;
             return "Welcome to QuizZzkampen! Please enter a username: ";
+        } else if (state == ENTER_USERNAME) {
+            state = CHOOSE_CATEGORY;
+            return "Please enter a username: ";
         } else if (state == CHOOSE_CATEGORY) {
             state = QUIZZING;
             return "Choose a category";

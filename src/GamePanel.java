@@ -2,14 +2,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
+
+    private final int INITIAL = 0;
+    private final int ENTER_USERNAME = 1;
+    private final int CHOOSE_CATEGORY = 2;
+    private final int QUIZZING = 3;
+    private final int WAITING = 4;
+    private final int SHOW_SCORE_THIS_ROUND = 5;
+    private final int FINAL = 6;
+    private int currentState = INITIAL;
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
@@ -24,28 +29,16 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
 
+    private ClassMaker currentCategory;
     private int currentQuestionIndex;
     private int score;
     private List<QuestionClass> questions;
 
-    Socket socket;
-    String messageOut="";
-    String messageIn="";
-    PrintWriter out;
-    BufferedReader in;
 
     public GamePanel() {
-        try {
-            socket = new Socket("127.0.0.1",5050);
-            this.out = new PrintWriter(socket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("fel vid writer/reader initialisering", e);
-        }
 
         setUpFrame();
-        mainMenuPanel();
+        handleState();
     }
 
     @Override
@@ -54,22 +47,54 @@ public class GamePanel extends JFrame implements ActionListener {
             System.exit(0);
         }
         if (e.getSource() == playButton) {
-            enterUserNamePanel();
+            currentState = ENTER_USERNAME;
+            handleState();
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
            if(!userNameField.getText().trim().isEmpty()) {
-               showCategoriesPanel();
+               currentState = CHOOSE_CATEGORY;
+               handleState();
            }
         }
         if (e.getSource() == category1Button) {
-            startGamePanel(ClassMaker.ANIMALS);
+            currentCategory = ClassMaker.ANIMALS;
+            currentState = QUIZZING;
+            handleState();
         }
         if (e.getSource() == category2Button) {
-            startGamePanel(ClassMaker.SCIENCE);
+            currentCategory = ClassMaker.SCIENCE;
+            currentState = QUIZZING;
+            handleState();
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
             JButton clickedButton = (JButton) e.getSource();
             checkAnswer(clickedButton.getText());
+        }
+    }
+
+    private void handleState() {
+        switch (currentState) {
+            case INITIAL:
+                mainMenuPanel();
+                break;
+            case ENTER_USERNAME:
+                enterUserNamePanel();
+                break;
+            case CHOOSE_CATEGORY:
+                showCategoriesPanel();
+                break;
+            case QUIZZING:
+                startGamePanel(currentCategory);
+                break;
+            case WAITING:
+                waitingForOtherPlayerPanel();
+                break;
+            case SHOW_SCORE_THIS_ROUND:
+                roundFinishedPanel();
+                break;
+            case FINAL:
+                finalScorePanel();
+                break;
         }
     }
 
@@ -170,15 +195,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void startGamePanel(ClassMaker category) {
 
-        messageOut="hehehe";
-        System.out.println("1");
-        send(messageOut);
-        System.out.println("2");
-        messageIn=receive();
-        System.out.println("3");
-        System.out.println(messageIn);
-        System.out.println("4");
-
         questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
@@ -252,7 +268,16 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void roundFinishedPanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
 
+        JLabel scoreLabel = new JLabel("Score this round: " + score);
+        scoreLabel.setFont(new Font("Impact", Font.BOLD, 30));
+        scoreLabel.setForeground(new Color(211, 211, 211));
+        scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        scoreLabel.setBounds(150, 50, 400, 350);
+        add(scoreLabel);
     }
 
     private void checkAnswer(String answer) {
@@ -304,23 +329,6 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreField.setBorder(null);
         scoreField.setBounds(200, 300, 300, 100);
         scoreField.setText("Score: " + score + "/" + questions.size());
-    }
-
-    public void send(String message){
-        out.println(message + "\n");
-    }
-
-    public String receive(){
-        try {
-            String message = in.readLine();
-            if(message!=null){
-                return message;
-            }
-            return "failed to read message";
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
     }
 
     public static void main(String[] args) {
