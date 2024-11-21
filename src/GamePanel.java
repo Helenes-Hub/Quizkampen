@@ -25,15 +25,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
 
     public GamePanel() {
-        setTitle("Quiz");
-        setLayout(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 700);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setVisible(true);
-        getContentPane().setBackground(new Color(0, 50, 76));
-
+        setUpFrame();
         mainMenuPanel();
     }
 
@@ -60,6 +52,17 @@ public class GamePanel extends JFrame implements ActionListener {
             JButton clickedButton = (JButton) e.getSource();
             checkAnswer(clickedButton.getText());
         }
+    }
+
+    private void setUpFrame() {
+        setTitle("Quiz");
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(700, 700);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        getContentPane().setBackground(new Color(0, 50, 76));
     }
 
     private void mainMenuPanel() {
@@ -220,6 +223,10 @@ public class GamePanel extends JFrame implements ActionListener {
         getContentPane().add(waitingForOtherPlayerLabel);
     }
 
+    private void roundFinishedPanel() {
+
+    }
+
     private void checkAnswer(String answer) {
         QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         if(answer.equals(currentQuestion.getCorrectAnswer())) {
@@ -231,7 +238,7 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
-            endGamePanel();
+            finalScorePanel();
         }
     }
 
@@ -247,13 +254,13 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setText(options.get(3));
     }
 
-    private void endGamePanel() {
+    private void finalScorePanel() {
         getContentPane().removeAll();
         revalidate();
         repaint();
 
         add(title);
-        title.setText("Game Over");
+        title.setText("Final score");
 
         add(quitButton);
         quitButton.setBounds(250, 470, 200, 100);
