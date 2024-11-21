@@ -8,7 +8,7 @@ public class GameFlow extends Thread {
     private int timer;
     private int questionsPerRound;
     private int rounds;
-    private int counterOfRounds;
+    private int counterOfRounds = 0;
     private Player player1;
     private Player player2;
     private Player currentPlayer;
@@ -40,7 +40,6 @@ public class GameFlow extends Thread {
 
     }
 
-
     public void run() {
         //----properties load and set end
         GamePanel gamePanel = new GamePanel();
@@ -61,6 +60,8 @@ public class GameFlow extends Thread {
         player1.send(protocol.getOutput(3));
         //Den här borde gå att göra bättre. En egen metod? Skicka in counterOfRounds och sparar pointsThisRound i arrayen
         player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
+        //Håller koll på vilken runda vi är på
+        counterOfRounds++;
         //Skickar och visar poäng denna runda
         player1.send(protocol.getOutput(4));
         //Tillbaka till quizzing och rond 2

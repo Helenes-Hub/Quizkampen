@@ -13,7 +13,6 @@ public class Player {
     Socket socket;
     String username;
     String themeChoice;
-    int counterOfRounds = 0;
     int pointsThisRound;
     int[] pointsAllRounds;
 
@@ -61,7 +60,6 @@ public class Player {
 
     public void addPointsThisRound(int roundNumber,int pointsThisRound) {
         pointsAllRounds[roundNumber] = pointsThisRound;
-        counterOfRounds++;
     }
 
     public void close() {
