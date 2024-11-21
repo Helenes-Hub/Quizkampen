@@ -47,16 +47,16 @@ public class GameFlow extends Thread {
         //Skriver ut välkomstmeddelande
         player1.send(protocol.getOutput(0));
         //Läser in username
-        player1.username = player1.receive();
+        player1.username = (String) player1.receive();
         //Välj kategori visas
         player1.send(protocol.getOutput(1));
         //Sparar vald kategori som läses in av GameFlow
-        player1.themeChoice = player1.receive();
+        player1.themeChoice = (String) player1.receive();
         //Skickar frågor till spelare
         player1.send(protocol.getOutput(2));
         //Spelet spelas
         //Metod som hanterar spel?
-        player1.pointsThisRound = Integer.parseInt(player1.receive());
+        player1.pointsThisRound = Integer.parseInt((String) player1.receive());
         player1.send(protocol.getOutput(3));
         //Den här borde gå att göra bättre. En egen metod? Skicka in counterOfRounds och sparar pointsThisRound i arrayen
         player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);

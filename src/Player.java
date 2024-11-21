@@ -1,14 +1,11 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 //Spelarklass som sköter in och utströmmar(kommunikation) och skapar spelare till GameFlow
 public class Player {
 
-    BufferedReader in;
-    PrintWriter out;
+    ObjectInputStream in;
+    ObjectOutputStream out;
     Player opponent;
     Socket socket;
     String username;
@@ -20,8 +17,8 @@ public class Player {
     public Player(Socket socket) {
         this.socket = socket;
 
-        try{this.out = new PrintWriter(socket.getOutputStream(),true);
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try{this.out = new ObjectOutputStream(socket.getOutputStream());
+            this.in = new ObjectInputStream(socket.getInputStream());
 
 
         } catch (IOException e){
@@ -29,18 +26,22 @@ public class Player {
         }
     }
 
-    public void send(String message){
-        out.println(message);
-    }
-
-    public String receive()  {
+    public void send(String message) {
         try {
-            return in.readLine();
+            out.writeObject(message);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
+
+        public Object receive()  {
+        try {
+            return in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        }
 
     public void setOpponent(Player opponent) {
         this.opponent = opponent;
