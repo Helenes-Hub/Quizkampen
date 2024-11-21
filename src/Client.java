@@ -12,7 +12,7 @@ public class Client {
 
     public Client() {
         //La till för att kunna testa panelerna
-        //GamePanel gamePanel = new GamePanel();
+        GamePanel gamePanel = new GamePanel();
         try (Socket socketToServer = new Socket(address, port);
              PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));) {

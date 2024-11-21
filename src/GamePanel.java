@@ -11,7 +11,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private JTextField userNameField = new JTextField();
     private JButton playButton = new JButton("Play");
     private JButton quitButton = new JButton("Quit");
-    JButton enterNameButton = new JButton("Enter");
+    private JButton enterNameButton = new JButton("Enter");
     private JButton category1Button = new JButton();
     private JButton category2Button = new JButton();
     private JButton buttonA = new JButton();
@@ -34,32 +34,7 @@ public class GamePanel extends JFrame implements ActionListener {
         setVisible(true);
         getContentPane().setBackground(new Color(0, 50, 76));
 
-
-        add(title);
-        title.setEditable(false);
-        title.setFocusable(false);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setBorder(null);
-        title.setFont(new Font("Impact", Font.BOLD, 100));
-        title.setBackground(new Color(0, 50, 76));
-        title.setForeground(new Color(211, 211, 211));
-        title.setBounds(150, 50, 400, 100);
-
-        add(playButton);
-        add(quitButton);
-        playButton.addActionListener(this);
-        quitButton.addActionListener(this);
-
-        playButton.setBounds(250, 250, 200, 100);
-        playButton.setBackground(new Color(211, 211, 211));
-        playButton.setFont(new Font("Impact", Font.BOLD, 30));
-        playButton.setFocusable(false);
-
-        quitButton.setBounds(250, 370, 200, 100);
-        quitButton.setBackground(new Color(211, 211, 211));
-        quitButton.setFont(new Font("Impact", Font.BOLD, 30));
-        quitButton.setFocusable(false);
-
+        mainMenuPanel();
     }
 
     @Override
@@ -87,6 +62,33 @@ public class GamePanel extends JFrame implements ActionListener {
         }
     }
 
+    private void mainMenuPanel() {
+        add(title);
+        title.setEditable(false);
+        title.setFocusable(false);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setBorder(null);
+        title.setFont(new Font("Impact", Font.BOLD, 100));
+        title.setBackground(new Color(0, 50, 76));
+        title.setForeground(new Color(211, 211, 211));
+        title.setBounds(150, 50, 400, 100);
+
+        add(playButton);
+        add(quitButton);
+        playButton.addActionListener(this);
+        quitButton.addActionListener(this);
+
+        playButton.setBounds(250, 250, 200, 100);
+        playButton.setBackground(new Color(211, 211, 211));
+        playButton.setFont(new Font("Impact", Font.BOLD, 30));
+        playButton.setFocusable(false);
+
+        quitButton.setBounds(250, 370, 200, 100);
+        quitButton.setBackground(new Color(211, 211, 211));
+        quitButton.setFont(new Font("Impact", Font.BOLD, 30));
+        quitButton.setFocusable(false);
+    }
+
     private void enterUserNamePanel() {
         getContentPane().removeAll();
         revalidate();
@@ -99,7 +101,6 @@ public class GamePanel extends JFrame implements ActionListener {
         userNameLabel.setBounds(150, 50, 400, 350);
         add(userNameLabel);
 
-
         userNameField.setBackground(new Color(211, 211, 211));
         userNameField.setFont(new Font("Impact", Font.BOLD, 30));
         userNameField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -107,6 +108,7 @@ public class GamePanel extends JFrame implements ActionListener {
         userNameField.setBounds(150, 275, 400, 50);
         userNameField.addActionListener(this);
         add(userNameField);
+        userNameField.requestFocus();
 
         enterNameButton.setBounds(250, 350, 200, 50);
         enterNameButton.setBackground(new Color(211, 211, 211));
@@ -117,6 +119,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void showCategoriesPanel() {
+        userNameField.setText("");
         getContentPane().removeAll();
         revalidate();
         repaint();
