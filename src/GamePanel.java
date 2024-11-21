@@ -13,8 +13,10 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
+    private JTextField userNameField = new JTextField();
     private JButton playButton = new JButton("Play");
     private JButton quitButton = new JButton("Quit");
+    private JButton enterNameButton = new JButton("Enter");
     private JButton category1Button = new JButton();
     private JButton category2Button = new JButton();
     private JButton buttonA = new JButton();
@@ -32,8 +34,7 @@ public class GamePanel extends JFrame implements ActionListener {
     PrintWriter out;
     BufferedReader in;
 
-    public GamePanel(){
-
+    public GamePanel() {
         try {
             socket = new Socket("127.0.0.1",5050);
             this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -43,6 +44,36 @@ public class GamePanel extends JFrame implements ActionListener {
             throw new RuntimeException("fel vid writer/reader initialisering", e);
         }
 
+        setUpFrame();
+        mainMenuPanel();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == quitButton) {
+            System.exit(0);
+        }
+        if (e.getSource() == playButton) {
+            enterUserNamePanel();
+        }
+        if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
+           if(!userNameField.getText().trim().isEmpty()) {
+               showCategoriesPanel();
+           }
+        }
+        if (e.getSource() == category1Button) {
+            startGamePanel(ClassMaker.ANIMALS);
+        }
+        if (e.getSource() == category2Button) {
+            startGamePanel(ClassMaker.SCIENCE);
+        }
+        if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
+            JButton clickedButton = (JButton) e.getSource();
+            checkAnswer(clickedButton.getText());
+        }
+    }
+
+    private void setUpFrame() {
         setTitle("Quiz");
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,8 +82,9 @@ public class GamePanel extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setVisible(true);
         getContentPane().setBackground(new Color(0, 50, 76));
+    }
 
-
+    private void mainMenuPanel() {
         add(title);
         title.setEditable(false);
         title.setFocusable(false);
@@ -77,30 +109,39 @@ public class GamePanel extends JFrame implements ActionListener {
         quitButton.setBackground(new Color(211, 211, 211));
         quitButton.setFont(new Font("Impact", Font.BOLD, 30));
         quitButton.setFocusable(false);
-
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == quitButton) {
-            System.exit(0);
-        }
-        if (e.getSource() == playButton) {
-            showCategories();
-        }
-        if (e.getSource() == category1Button) {
-            startGame(ClassMaker.ANIMALS);
-        }
-        if (e.getSource() == category2Button) {
-            startGame(ClassMaker.SCIENCE);
-        }
-        if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
-            JButton clickedButton = (JButton) e.getSource();
-            checkAnswer(clickedButton.getText());
-        }
+    private void enterUserNamePanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
+
+        JLabel userNameLabel = new JLabel("Enter your username");
+        userNameLabel.setFont(new Font("Impact", Font.BOLD, 30));
+        userNameLabel.setForeground(new Color(211, 211, 211));
+        userNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        userNameLabel.setBounds(150, 50, 400, 350);
+        add(userNameLabel);
+
+        userNameField.setBackground(new Color(211, 211, 211));
+        userNameField.setFont(new Font("Impact", Font.BOLD, 30));
+        userNameField.setHorizontalAlignment(SwingConstants.CENTER);
+        userNameField.setBorder(null);
+        userNameField.setBounds(150, 275, 400, 50);
+        userNameField.addActionListener(this);
+        add(userNameField);
+        userNameField.requestFocus();
+
+        enterNameButton.setBounds(250, 350, 200, 50);
+        enterNameButton.setBackground(new Color(211, 211, 211));
+        enterNameButton.setFont(new Font("Impact", Font.BOLD, 30));
+        enterNameButton.setFocusable(false);
+        enterNameButton.addActionListener(this);
+        add(enterNameButton);
     }
 
-    private void showCategories() {
+    private void showCategoriesPanel() {
+        userNameField.setText("");
         getContentPane().removeAll();
         revalidate();
         repaint();
@@ -127,7 +168,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     }
 
-    private void startGame(ClassMaker category) {
+    private void startGamePanel(ClassMaker category) {
 
         messageOut="hehehe";
         System.out.println("1");
@@ -195,6 +236,22 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setText(options.get(3));
         buttonD.setFocusable(false);
         buttonD.addActionListener(this);
+    }
+
+    private void waitingForOtherPlayerPanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
+
+        JLabel waitingForOtherPlayerLabel = new JLabel("Waiting for other player");
+        waitingForOtherPlayerLabel.setFont(new Font("Impact", Font.BOLD, 30));
+        waitingForOtherPlayerLabel.setForeground(new Color(211, 211, 211));
+        waitingForOtherPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        waitingForOtherPlayerLabel.setBounds(150, 50, 400, 350);
+        getContentPane().add(waitingForOtherPlayerLabel);
+    }
+
+    private void roundFinishedPanel() {
 
     }
 
@@ -209,7 +266,7 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
-            endGame();
+            finalScorePanel();
         }
     }
 
@@ -223,6 +280,30 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
         buttonD.setText(options.get(3));
+    }
+
+    private void finalScorePanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
+
+        add(title);
+        title.setText("Final score");
+
+        add(quitButton);
+        quitButton.setBounds(250, 470, 200, 100);
+
+        JTextField scoreField = new JTextField();
+        add(scoreField);
+        scoreField.setEditable(false);
+        scoreField.setFocusable(false);
+        scoreField.setHorizontalAlignment(SwingConstants.CENTER);
+        scoreField.setBackground(new Color(0, 50, 76));
+        scoreField.setForeground(new Color(211, 211, 211));
+        scoreField.setFont(new Font("Impact", Font.BOLD, 30));
+        scoreField.setBorder(null);
+        scoreField.setBounds(200, 300, 300, 100);
+        scoreField.setText("Score: " + score + "/" + questions.size());
     }
 
     public void send(String message){
@@ -242,33 +323,8 @@ public class GamePanel extends JFrame implements ActionListener {
         }
     }
 
-    private void endGame() {
-        getContentPane().removeAll();
-        revalidate();
-        repaint();
-
-        add(title);
-        title.setText("Game Over");
-
-        add(quitButton);
-        quitButton.setBounds(250, 470, 200, 100);
-
-        JTextField scoreField = new JTextField();
-        add(scoreField);
-        scoreField.setEditable(false);
-        scoreField.setFocusable(false);
-        scoreField.setHorizontalAlignment(SwingConstants.CENTER);
-        scoreField.setBackground(new Color(0, 50, 76));
-        scoreField.setForeground(new Color(211, 211, 211));
-        scoreField.setFont(new Font("Impact", Font.BOLD, 30));
-        scoreField.setBorder(null);
-        scoreField.setBounds(200, 300, 300, 100);
-        scoreField.setText("Score: " + score + "/" + questions.size());
-
-    }
-
     public static void main(String[] args) {
-            new GamePanel();
+        new GamePanel();
 
     }
 }
