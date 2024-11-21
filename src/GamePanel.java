@@ -8,8 +8,10 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
+    private JTextField userNameField = new JTextField();
     private JButton playButton = new JButton("Play");
     private JButton quitButton = new JButton("Quit");
+    JButton enterNameButton = new JButton("Enter");
     private JButton category1Button = new JButton();
     private JButton category2Button = new JButton();
     private JButton buttonA = new JButton();
@@ -66,13 +68,18 @@ public class GamePanel extends JFrame implements ActionListener {
             System.exit(0);
         }
         if (e.getSource() == playButton) {
-            showCategories();
+            enterUserNamePanel();
+        }
+        if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
+           if(!userNameField.getText().trim().isEmpty()) {
+               showCategoriesPanel();
+           }
         }
         if (e.getSource() == category1Button) {
-            startGame(ClassMaker.ANIMALS);
+            startGamePanel(ClassMaker.ANIMALS);
         }
         if (e.getSource() == category2Button) {
-            startGame(ClassMaker.SCIENCE);
+            startGamePanel(ClassMaker.SCIENCE);
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
             JButton clickedButton = (JButton) e.getSource();
@@ -80,7 +87,36 @@ public class GamePanel extends JFrame implements ActionListener {
         }
     }
 
-    private void showCategories() {
+    private void enterUserNamePanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
+
+        JLabel userNameLabel = new JLabel("Enter your username");
+        userNameLabel.setFont(new Font("Impact", Font.BOLD, 30));
+        userNameLabel.setForeground(new Color(211, 211, 211));
+        userNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        userNameLabel.setBounds(150, 50, 400, 350);
+        add(userNameLabel);
+
+
+        userNameField.setBackground(new Color(211, 211, 211));
+        userNameField.setFont(new Font("Impact", Font.BOLD, 30));
+        userNameField.setHorizontalAlignment(SwingConstants.CENTER);
+        userNameField.setBorder(null);
+        userNameField.setBounds(150, 275, 400, 50);
+        userNameField.addActionListener(this);
+        add(userNameField);
+
+        enterNameButton.setBounds(250, 350, 200, 50);
+        enterNameButton.setBackground(new Color(211, 211, 211));
+        enterNameButton.setFont(new Font("Impact", Font.BOLD, 30));
+        enterNameButton.setFocusable(false);
+        enterNameButton.addActionListener(this);
+        add(enterNameButton);
+    }
+
+    private void showCategoriesPanel() {
         getContentPane().removeAll();
         revalidate();
         repaint();
@@ -107,7 +143,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     }
 
-    private void startGame(ClassMaker category) {
+    private void startGamePanel(ClassMaker category) {
 
         questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -166,7 +202,19 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setText(options.get(3));
         buttonD.setFocusable(false);
         buttonD.addActionListener(this);
+    }
 
+    private void waitingForOtherPlayerPanel() {
+        getContentPane().removeAll();
+        revalidate();
+        repaint();
+
+        JLabel waitingForOtherPlayerLabel = new JLabel("Waiting for other player");
+        waitingForOtherPlayerLabel.setFont(new Font("Impact", Font.BOLD, 30));
+        waitingForOtherPlayerLabel.setForeground(new Color(211, 211, 211));
+        waitingForOtherPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        waitingForOtherPlayerLabel.setBounds(150, 50, 400, 350);
+        getContentPane().add(waitingForOtherPlayerLabel);
     }
 
     private void checkAnswer(String answer) {
@@ -180,7 +228,7 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
-            endGame();
+            endGamePanel();
         }
     }
 
@@ -196,7 +244,7 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setText(options.get(3));
     }
 
-    private void endGame() {
+    private void endGamePanel() {
         getContentPane().removeAll();
         revalidate();
         repaint();
@@ -218,6 +266,5 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreField.setBorder(null);
         scoreField.setBounds(200, 300, 300, 100);
         scoreField.setText("Score: " + score + "/" + questions.size());
-
     }
 }
