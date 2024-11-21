@@ -1,8 +1,8 @@
 Spelet startas, spelare får ange namn (uppkoppling skett)
 Client kopplar upp till spel vid start av program:
 Client ansluter till Server.
-Server skapar Player och startar GameFlow.
-GameFlow anropar GamePanel och skickar (via var?) startrutan med välkomstmeddelande och username-efterfrågan.
+Server skapar Player, kommunicerar via Player och startar GameFlow.
+GameFlow anropar GamePanel och skickar String via Player som läggs på Clients startruta med välkomstmeddelande och username-efterfrågan.
 
 
 Spelare1 får välja kategori

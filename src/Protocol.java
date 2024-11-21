@@ -21,7 +21,7 @@ public class Protocol {
             return "FRÅGOR";
         } else if (state == WAITING) {
             state = SHOW_SCORE_THIS_ROUND;
-            return "Waiting for your opponent";
+            return "Waiting for your opponent. Here is your score this round: SCORE";
         } else if (state == SHOW_SCORE_THIS_ROUND) {
             state = FINAL;
             return "Score this round: SCORE";
