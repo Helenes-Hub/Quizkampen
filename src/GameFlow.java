@@ -54,7 +54,6 @@ public class GameFlow extends Thread {
         //----properties load and set end
 
         if (currentState == INITIAL){
-            //Skriver ut välkomstmeddelande
             player1.send(INITIAL);
             player2.send(INITIAL);
         } else if (currentState == ENTER_USERNAME){
@@ -65,71 +64,35 @@ public class GameFlow extends Thread {
             System.out.println(currentPlayer.username);
         }else if (currentState == CHOOSE_CATEGORY){
             player1.send(CHOOSE_CATEGORY);
+            player1.themeChoice = (String) player1.receive();
             player2.send(WAITING);
         }else if (currentState == QUIZZING){
             player1.send(QUIZZING);
+            player1.send(getQuestions());
             player2.send(WAITING);
             player1.send(SHOW_SCORE_THIS_ROUND);
             player2.send(QUIZZING);
-            //Bådas rondresultat ska visas nu
+            player2.send(getQuestions());
+            player1.pointsThisRound = Integer.parseInt((String) player1.receive());
+            player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
+            player2.pointsThisRound = Integer.parseInt((String) player2.receive());
+            player2.addPointsThisRound(counterOfRounds, player2.pointsThisRound);
+            counterOfRounds++;
+        }else if (currentState == SHOW_SCORE_THIS_ROUND){
             player1.send(SHOW_SCORE_THIS_ROUND);
             player2.send(SHOW_SCORE_THIS_ROUND);
-        }else if (currentState == WAITING){}
-
-        //Välj kategori visas
-
-        player1.send(CHOOSE_CATEGORY);
-        player1.themeChoice = (String) player1.receive();
-        player1.send(QUIZZING);
-        player1.send(getQuestions());
-        //Sparar vald kategori som läses in av GameFlow
-
-        //Skickar frågor till spelare
-        player1.send(QUIZZING);
-        //Spelet spelas
-        //Metod som hanterar spel?
-        player1.pointsThisRound = Integer.parseInt((String) player1.receive());
-        player1.send(SHOW_SCORE_THIS_ROUND);
-        //Den här borde gå att göra bättre. En egen metod? Skicka in counterOfRounds och sparar pointsThisRound i arrayen
-        player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
-        //Håller koll på vilken runda vi är på
-        counterOfRounds++;
-        //Skickar och visar poäng denna runda
-        player1.send(WAITING);
-        //Tillbaka till quizzing och rond 2
-        player1.send(QUIZZING);
-        //Skickar och visar poäng denna runda
-        player1.send(SHOW_SCORE_THIS_ROUND);
-        //Spelet slut och slutresultat visas
-        player1.send(FINAL);
+            player1.send(player1.getPointsThisRound());
+            player2.send(player2.getPointsThisRound());
+            player1.send(player1.getPointsAllRounds());
+            player2.send(player2.getPointsAllRounds());
+        } else if (currentState == FINAL){
+            player1.send(FINAL);
+            player1.send(player1.getTotalScore());
+            player2.send(FINAL);
+            player2.send(player2.getTotalScore());
+        }
 
         player1.close();
-    }
-
-    private void handleState() {
-        switch (currentState) {
-            case INITIAL:
-
-                break;
-            case ENTER_USERNAME:
-                enterUserNamePanel();
-                break;
-            case CHOOSE_CATEGORY:
-                showCategoriesPanel();
-                break;
-            case QUIZZING:
-                startGamePanel();
-                break;
-            case WAITING:
-                waitingForOtherPlayerPanel();
-                break;
-            case SHOW_SCORE_THIS_ROUND:
-                roundFinishedPanel();
-                break;
-            case FINAL:
-                finalScorePanel();
-                break;
-        }
     }
 
     public ArrayList[][] getQuestions() {
@@ -145,7 +108,7 @@ public class GameFlow extends Thread {
         }
         for (int i = 0; i < this.questionsPerRound; i++) {
             String currentQuestion = questions.get(i).getQuestion();
-            List<String> options=questions.get(i).getOptions();
+            List<String> options = questions.get(i).getOptions();
             questionArray[i][0].add(questions.get(i).getQuestion());
             questionArray[i][1].addAll(questions.get(i).getOptions());
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
@@ -153,9 +116,6 @@ public class GameFlow extends Thread {
             System.out.println(questionArray[i][1]);
             System.out.println(questionArray[i][2]);
         }
-
-
-
         return questionArray;
     }
 

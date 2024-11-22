@@ -63,6 +63,22 @@ public class Player {
         pointsAllRounds[roundNumber] = pointsThisRound;
     }
 
+    public int getPointsThisRound() {
+        return pointsThisRound;
+    }
+
+    public int[] getPointsAllRounds() {
+        return pointsAllRounds;
+    }
+
+    public int getTotalScore(){
+        int totalScore = 0;
+        for(int points : pointsAllRounds){
+            totalScore = totalScore + points;
+        }
+        return totalScore;
+    }
+
     public void close() {
         try{
             in.close();
