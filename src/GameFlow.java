@@ -38,15 +38,24 @@ public class GameFlow extends Thread {
         player1.setRounds(rounds);
         player2.setRounds(rounds);
 
+        //private final int INITIAL = 0;
+       // private final int ENTER_USERNAME = 1;
+       // private final int CHOOSE_CATEGORY = 2;
+        //private final int QUIZZING = 3;
+       // private final int WAITING = 4;
+       // private final int SHOW_SCORE_THIS_ROUND = 5;
+       // private final int FINAL = 6;
+
     }
 
     public void run() {
         //----properties load and set end
 
         //Skriver ut välkomstmeddelande
-        player1.send(protocol.getOutput(0));
+        currentPlayer.send(protocol.getOutput(0));
         //Läser in username
-        player1.username = (String) player1.receive();
+        currentPlayer.username = (String) currentPlayer.receive();
+        System.out.println(currentPlayer.username);
         //Välj kategori visas
         player1.send(protocol.getOutput(1));
         //Sparar vald kategori som läses in av GameFlow

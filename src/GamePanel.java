@@ -7,14 +7,14 @@ import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
 
-    private final int INITIAL = 0;
-    private final int ENTER_USERNAME = 1;
-    private final int CHOOSE_CATEGORY = 2;
-    private final int QUIZZING = 3;
-    private final int WAITING = 4;
-    private final int SHOW_SCORE_THIS_ROUND = 5;
-    private final int FINAL = 6;
-    private int currentState = INITIAL;
+    private final String INITIAL = "INITIAL";
+    private final String ENTER_USERNAME = "ENTER_USERNAME";
+    private final String CHOOSE_CATEGORY = "CHOOSE_CATEGORY";
+    private final String QUIZZING = "QUIZZING";
+    private final String WAITING = "WAITING";
+    private final String SHOW_SCORE_THIS_ROUND = "SHOW_SCORE_THIS_ROUND";
+    private final String FINAL = "FINAL";
+    private String currentState = INITIAL;
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
@@ -29,16 +29,26 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
 
-    private ClassMaker currentCategory;
+    private String currentCategory;
     private int currentQuestionIndex;
     private int score;
     private List<QuestionClass> questions;
+    private Object fromServer;
+    private Object toServer;
+    Client client=new Client();
 
 
     public GamePanel() {
 
         setUpFrame();
-        handleState();
+       // handleState();
+        while (true){
+            fromServer=client.receive();
+            currentState=fromServer.toString();
+            System.out.println(currentState);
+            handleState();
+
+        }
     }
 
     @Override
@@ -48,23 +58,30 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == playButton) {
             currentState = ENTER_USERNAME;
-            handleState();
+            //handleState();
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
            if(!userNameField.getText().trim().isEmpty()) {
+               toServer=userNameField.getText().trim();
+               client.send(toServer.toString());
                currentState = CHOOSE_CATEGORY;
-               handleState();
+               //handleState();
+               return;
            }
         }
         if (e.getSource() == category1Button) {
-            currentCategory = ClassMaker.ANIMALS;
+            toServer=category1Button.getText().toUpperCase();
+            currentCategory = (String) toServer;
+            client.send(toServer.toString());
             currentState = QUIZZING;
-            handleState();
+            //handleState();
         }
         if (e.getSource() == category2Button) {
-            currentCategory = ClassMaker.SCIENCE;
+            toServer=category1Button.getText().toUpperCase();
+            currentCategory = (String) toServer;
+            client.send(toServer.toString());
             currentState = QUIZZING;
-            handleState();
+            //handleState();
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
             JButton clickedButton = (JButton) e.getSource();
@@ -84,7 +101,8 @@ public class GamePanel extends JFrame implements ActionListener {
                 showCategoriesPanel();
                 break;
             case QUIZZING:
-                startGamePanel(currentCategory);
+                client.receive();
+                startGamePanel(questions);
                 break;
             case WAITING:
                 waitingForOtherPlayerPanel();
@@ -193,14 +211,16 @@ public class GamePanel extends JFrame implements ActionListener {
 
     }
 
-    private void startGamePanel(ClassMaker category) {
+    private void startGamePanel(List<QuestionClass> questions) {
 
-        questions = category.getQuestions();
+        //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
         QuestionClass currentQuestion = questions.get(currentQuestionIndex);
+        // list[currentQuestionindex][0]
         List<String> options = currentQuestion.getOptions();
-
+        //list = {1. fråga- options- rätt svar
+        //          {}
         getContentPane().removeAll();
         revalidate();
         repaint();
@@ -333,6 +353,5 @@ public class GamePanel extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         new GamePanel();
-
     }
 }

@@ -11,15 +11,14 @@ public class Client {
     ObjectInputStream in;
 
     public Client() {
-        try {this.socketToServer = new Socket(address, port);
+        try {this.socketToServer = new Socket("127.0.0.1", port);
             this.out = new ObjectOutputStream(socketToServer.getOutputStream());
              this.in = new ObjectInputStream(socketToServer.getInputStream());
-
-            close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //new GamePanel(this);
     }
 
     public void send(String message){

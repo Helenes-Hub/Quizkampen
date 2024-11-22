@@ -13,13 +13,13 @@ public class Protocol {
     public String getOutput(int state) {
         if (state == INITIAL) {
             state = ENTER_USERNAME;
-            return "Welcome to QuizZzkampen! Please enter a username: ";
+            return "ENTER_USERNAME";
         } else if (state == ENTER_USERNAME) {
             state = CHOOSE_CATEGORY;
             return "Please enter a username: ";
         } else if (state == CHOOSE_CATEGORY) {
             state = QUIZZING;
-            return "Choose a category";
+            return "CHOOSE_CATEGORY";
         }else if (state == QUIZZING) {
             state = WAITING;
             return "FRÅGOR";
