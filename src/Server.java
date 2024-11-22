@@ -1,5 +1,3 @@
-package Server;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 //Servern ser till att klienter blir spelare och skapar kontakt mellan klient och server samt startar ett spel

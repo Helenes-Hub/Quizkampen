@@ -1,9 +1,7 @@
-package Server;
-
 import java.io.*;
 import java.net.Socket;
 
-//Spelarklass som sköter in och utströmmar(kommunikation) och skapar spelare till Server.GameFlow
+//Spelarklass som sköter in och utströmmar(kommunikation) och skapar spelare till GameFlow
 public class Player {
 
     ObjectInputStream in;

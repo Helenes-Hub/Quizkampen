@@ -1,5 +1,3 @@
-package Server;
-
 public class Protocol {
     protected static final int INITIAL = 0;
     protected static final int ENTER_USERNAME = 1;
