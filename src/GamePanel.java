@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
@@ -32,7 +34,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private String currentCategory;
     private int currentQuestionIndex;
     private int score;
-    private List<QuestionClass> questions;
+    private ArrayList[][] questionArray;
     private Object fromServer;
     private Object toServer;
     Client client=new Client();
@@ -102,7 +104,7 @@ public class GamePanel extends JFrame implements ActionListener {
                 break;
             case QUIZZING:
                 client.receive();
-                startGamePanel(questions);
+                startGamePanel();
                 break;
             case WAITING:
                 waitingForOtherPlayerPanel();
@@ -211,14 +213,14 @@ public class GamePanel extends JFrame implements ActionListener {
 
     }
 
-    private void startGamePanel(List<QuestionClass> questions) {
+    private void startGamePanel() {
 
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
-        QuestionClass currentQuestion = questions.get(currentQuestionIndex);
+        //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         // list[currentQuestionindex][0]
-        List<String> options = currentQuestion.getOptions();
+        //List<String> options = currentQuestion.getOptions();
         //list = {1. fråga- options- rätt svar
         //          {}
         getContentPane().removeAll();
@@ -239,13 +241,13 @@ public class GamePanel extends JFrame implements ActionListener {
         question.setForeground(new Color(211, 211, 211));
         question.setFont(new Font("Impact", Font.BOLD, 30));
         question.setFocusable(false);
-        question.setText(currentQuestion.getQuestion());
+        //question.setText(currentQuestion.getQuestion());
 
         add(buttonA);
         buttonA.setBounds(45, 350, 300, 100);
         buttonA.setBackground(new Color(211, 211, 211));
         buttonA.setFont(new Font("Impact", Font.BOLD, 30));
-        buttonA.setText(options.get(0));
+        //buttonA.setText(options.get(0));
         buttonA.setFocusable(false);
         buttonA.addActionListener(this);
 
@@ -253,7 +255,7 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setBounds(355, 350, 300, 100);
         buttonB.setBackground(new Color(211, 211, 211));
         buttonB.setFont(new Font("Impact", Font.BOLD, 30));
-        buttonB.setText(options.get(1));
+        //buttonB.setText(options.get(1));
         buttonB.setFocusable(false);
         buttonB.addActionListener(this);
 
@@ -261,7 +263,7 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonC.setBounds(45, 470, 300, 100);
         buttonC.setBackground(new Color(211, 211, 211));
         buttonC.setFont(new Font("Impact", Font.BOLD, 30));
-        buttonC.setText(options.get(2));
+        //buttonC.setText(options.get(2));
         buttonC.setFocusable(false);
         buttonC.addActionListener(this);
 
@@ -269,7 +271,7 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setBounds(355, 470, 300, 100);
         buttonD.setBackground(new Color(211, 211, 211));
         buttonD.setFont(new Font("Impact", Font.BOLD, 30));
-        buttonD.setText(options.get(3));
+        //buttonD.setText(options.get(3));
         buttonD.setFocusable(false);
         buttonD.addActionListener(this);
     }
@@ -301,13 +303,14 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void checkAnswer(String answer) {
-        QuestionClass currentQuestion = questions.get(currentQuestionIndex);
-        if(answer.equals(currentQuestion.getCorrectAnswer())) {
+        //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
+        String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2]);
+        if(answer.equals(correctAnswer)) {
             score++;
         }
         currentQuestionIndex++;
 
-        if(currentQuestionIndex < questions.size()) {
+        if(currentQuestionIndex < questionArray[0].length) {
             nextQuestion();
         }
         else {
@@ -316,11 +319,11 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void nextQuestion() {
-        QuestionClass currentQuestion = questions.get(currentQuestionIndex);
-        List<String> options = currentQuestion.getOptions();
+        String currentQuestion = String.valueOf(questionArray[currentQuestionIndex][0]);
+        List<String> options = questionArray[currentQuestionIndex][1];
 
         title.setText("Question " + (currentQuestionIndex + 1));
-        question.setText(currentQuestion.getQuestion());
+        question.setText(currentQuestion);
         buttonA.setText(options.get(0));
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
@@ -348,8 +351,9 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreField.setFont(new Font("Impact", Font.BOLD, 30));
         scoreField.setBorder(null);
         scoreField.setBounds(200, 300, 300, 100);
-        scoreField.setText("Score: " + score + "/" + questions.size());
+        scoreField.setText("Score: " + score + "/" + (int) Arrays.stream(questionArray).count());
     }
+
 
     public static void main(String[] args) {
         new GamePanel();
