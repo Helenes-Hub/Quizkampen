@@ -28,6 +28,19 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonB = new JButton();
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
+    private final JLabel timeLabel = new JLabel();
+    private final JLabel secondsLeft = new JLabel();
+    private int seconds = 30;
+
+/*
+    Timer time = new Timer(1000, l ->
+            seconds--;
+            secondsLeft.setText(String.valueOf(seconds));
+            if(seconds <= 0){
+                //KOD FÖR FEL SVAR
+    });
+
+ */
 
     private ClassMaker currentCategory;
     private int currentQuestionIndex;
