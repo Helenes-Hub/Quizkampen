@@ -43,7 +43,6 @@ public class GamePanel extends JFrame implements ActionListener {
     public GamePanel() {
 
         setUpFrame();
-       // handleState();
         while (true){
             fromServer=client.receive();
             currentState=Integer.parseInt(fromServer.toString());
@@ -103,7 +102,6 @@ public class GamePanel extends JFrame implements ActionListener {
                 showCategoriesPanel();
                 break;
             case QUIZZING:
-                client.receive();
                 startGamePanel();
                 break;
             case WAITING:
@@ -215,6 +213,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void startGamePanel() {
 
+        questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
@@ -274,6 +273,7 @@ public class GamePanel extends JFrame implements ActionListener {
         //buttonD.setText(options.get(3));
         buttonD.setFocusable(false);
         buttonD.addActionListener(this);
+        nextQuestion();
     }
 
     private void waitingForOtherPlayerPanel() {

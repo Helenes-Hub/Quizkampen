@@ -13,6 +13,7 @@ public class GameFlow extends Thread {
     private final int WAITING = 4;
     private final int SHOW_SCORE_THIS_ROUND = 5;
     private final int FINAL = 6;
+    private int currentState = 0;
 
     private int timer;
     private int questionsPerRound;
@@ -52,16 +53,37 @@ public class GameFlow extends Thread {
     public void run() {
         //----properties load and set end
 
-        //Skriver ut välkomstmeddelande
-        currentPlayer.send(INITIAL);
+        if (currentState == INITIAL){
+            //Skriver ut välkomstmeddelande
+            player1.send(INITIAL);
+            player2.send(INITIAL);
+        } else if (currentState == ENTER_USERNAME){
+            player1.send(ENTER_USERNAME);
+            player2.send(ENTER_USERNAME);
+            player1.username = (String) player1.receive();
+            player2.username = (String) player2.receive();
+            System.out.println(currentPlayer.username);
+        }else if (currentState == CHOOSE_CATEGORY){
+            player1.send(CHOOSE_CATEGORY);
+            player2.send(WAITING);
+        }else if (currentState == QUIZZING){
+            player1.send(QUIZZING);
+            player2.send(WAITING);
+            player1.send(SHOW_SCORE_THIS_ROUND);
+            player2.send(QUIZZING);
+            //Bådas rondresultat ska visas nu
+            player1.send(SHOW_SCORE_THIS_ROUND);
+            player2.send(SHOW_SCORE_THIS_ROUND);
+        }else if (currentState == WAITING){}
+
         //Välj kategori visas
-        player1.send(ENTER_USERNAME);
-        currentPlayer.username = (String) currentPlayer.receive();
-        System.out.println(currentPlayer.username);
+
         player1.send(CHOOSE_CATEGORY);
-        getQuestions();
-        //Sparar vald kategori som läses in av GameFlow
         player1.themeChoice = (String) player1.receive();
+        player1.send(QUIZZING);
+        player1.send(getQuestions());
+        //Sparar vald kategori som läses in av GameFlow
+
         //Skickar frågor till spelare
         player1.send(QUIZZING);
         //Spelet spelas
@@ -84,12 +106,37 @@ public class GameFlow extends Thread {
         player1.close();
     }
 
-    public List<QuestionClass> getQuestions() {
-        String userThemeChoice ="ANIMALS";                    // currentPlayer.getThemeChoice();
+    private void handleState() {
+        switch (currentState) {
+            case INITIAL:
+
+                break;
+            case ENTER_USERNAME:
+                enterUserNamePanel();
+                break;
+            case CHOOSE_CATEGORY:
+                showCategoriesPanel();
+                break;
+            case QUIZZING:
+                startGamePanel();
+                break;
+            case WAITING:
+                waitingForOtherPlayerPanel();
+                break;
+            case SHOW_SCORE_THIS_ROUND:
+                roundFinishedPanel();
+                break;
+            case FINAL:
+                finalScorePanel();
+                break;
+        }
+    }
+
+    public ArrayList[][] getQuestions() {
+        String userThemeChoice = currentPlayer.getThemeChoice();
         List<QuestionClass> allThemedQuestions = ClassMaker.valueOf(userThemeChoice).getQuestions();
         Collections.shuffle(allThemedQuestions);
         List<QuestionClass> questions = allThemedQuestions.subList(0, this.questionsPerRound);
-        //List<String><String>questionsToClient = new ArrayList<String>();
         ArrayList[][] questionArray= new ArrayList[3][3];
         for (int i = 0; i < this.questionsPerRound; i++) {
             for (int j = 0; j < 3; j++) {
@@ -109,7 +156,7 @@ public class GameFlow extends Thread {
 
 
 
-        return questions;
+        return questionArray;
     }
 
     public boolean winchecker(String userAnswer, String correctAnswer) {
@@ -117,9 +164,6 @@ public class GameFlow extends Thread {
             return true;
         }
         return false;
-    }
-
-    public static void main(String[] args) {
     }
 }
 
