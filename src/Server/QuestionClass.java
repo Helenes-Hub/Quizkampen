@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package Server;
+
 import java.util.List;
 
 //definerar varje fråga som en egen enhet

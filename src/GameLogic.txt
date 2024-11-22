@@ -1,14 +1,14 @@
 Spelet startas, spelare får ange namn (uppkoppling skett)
-Client kopplar upp till spel vid start av program:
-Client ansluter till Server.
-Server skapar Player, kommunicerar via Player och startar GameFlow.
-GameFlow anropar GamePanel och skickar String via Player som läggs på Clients startruta med välkomstmeddelande och username-efterfrågan.
+Client.Client kopplar upp till spel vid start av program:
+Client.Client ansluter till Server.Server.
+Server.Server skapar Server.Player, kommunicerar via Server.Player och startar Server.GameFlow.
+Server.GameFlow anropar Client.GamePanel och skickar String via Server.Player som läggs på Clients startruta med välkomstmeddelande och username-efterfrågan.
 
 
 Spelare1 får välja kategori
 När två spelare kopplat upp börjar spelet
-Server starar en tråd av GameFlow med nytt spel.
-GameFlow anropar GamePanel som skickar kategorialternativ
+Server.Server starar en tråd av Server.GameFlow med nytt spel.
+Server.GameFlow anropar Client.GamePanel som skickar kategorialternativ
 Sparar Spelare1s val.
 
 Spelare1 får svara på frågor och se sitt resultat

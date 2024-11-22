@@ -1,3 +1,5 @@
+package Server;
+
 import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,6 @@ public class GameFlow extends Thread {
 
     public void run() {
         //----properties load and set end
-        GamePanel gamePanel = new GamePanel();
 
         //Skriver ut välkomstmeddelande
         player1.send(protocol.getOutput(0));
@@ -50,7 +51,7 @@ public class GameFlow extends Thread {
         player1.username = (String) player1.receive();
         //Välj kategori visas
         player1.send(protocol.getOutput(1));
-        //Sparar vald kategori som läses in av GameFlow
+        //Sparar vald kategori som läses in av Server.GameFlow
         player1.themeChoice = (String) player1.receive();
         //Skickar frågor till spelare
         player1.send(protocol.getOutput(2));
