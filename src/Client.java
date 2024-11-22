@@ -21,9 +21,10 @@ public class Client {
         //new GamePanel(this);
     }
 
-    public void send(String message){
+    public void send(Object message){
         try {
             out.writeObject(message);
+            out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

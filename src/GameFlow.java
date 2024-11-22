@@ -52,16 +52,27 @@ public class GameFlow extends Thread {
 
     public void run() {
         //----properties load and set end
+        int temp = 4;
 
         if (currentState == INITIAL){
             player1.send(INITIAL);
             player2.send(INITIAL);
+            currentState = (int) player1.receive();
+            System.out.println("Här är du " + currentState);
         } else if (currentState == ENTER_USERNAME){
             player1.send(ENTER_USERNAME);
             player2.send(ENTER_USERNAME);
             player1.username = (String) player1.receive();
             player2.username = (String) player2.receive();
-            System.out.println(currentPlayer.username);
+            currentState = (int) player1.receive();
+            //temp = (int) player2.receive();
+            System.out.println(currentState);
+            System.out.println(currentState);
+            System.out.println(player1.username);
+            System.out.println(player2.username);
+        }else if(currentState == WAITING){
+            player1.send(QUIZZING);
+            player2.send(WAITING);
         }else if (currentState == CHOOSE_CATEGORY){
             player1.send(CHOOSE_CATEGORY);
             player1.themeChoice = (String) player1.receive();
@@ -92,7 +103,6 @@ public class GameFlow extends Thread {
             player2.send(player2.getTotalScore());
         }
 
-        player1.close();
     }
 
     public ArrayList[][] getQuestions() {

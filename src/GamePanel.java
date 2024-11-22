@@ -45,10 +45,9 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpFrame();
         while (true){
             fromServer=client.receive();
-            currentState=Integer.parseInt(fromServer.toString());
+            currentState=(int) fromServer;
             System.out.println(currentState);
             handleState();
-
         }
     }
 
@@ -59,14 +58,17 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == playButton) {
             currentState = ENTER_USERNAME;
-            //handleState();
+            client.send(currentState);
+            handleState();
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
            if(!userNameField.getText().trim().isEmpty()) {
                toServer=userNameField.getText().trim();
-               client.send(toServer.toString());
-               currentState = CHOOSE_CATEGORY;
-               //handleState();
+               System.out.println(toServer);
+               client.send(toServer);
+               //client.send(toServer);
+               currentState = WAITING;
+               handleState();
                return;
            }
         }
@@ -106,6 +108,7 @@ public class GamePanel extends JFrame implements ActionListener {
                 break;
             case WAITING:
                 waitingForOtherPlayerPanel();
+                client.send(currentState);
                 break;
             case SHOW_SCORE_THIS_ROUND:
                 roundFinishedPanel();
