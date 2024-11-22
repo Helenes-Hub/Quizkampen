@@ -7,14 +7,14 @@ import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
 
-    private final String INITIAL = "INITIAL";
-    private final String ENTER_USERNAME = "ENTER_USERNAME";
-    private final String CHOOSE_CATEGORY = "CHOOSE_CATEGORY";
-    private final String QUIZZING = "QUIZZING";
-    private final String WAITING = "WAITING";
-    private final String SHOW_SCORE_THIS_ROUND = "SHOW_SCORE_THIS_ROUND";
-    private final String FINAL = "FINAL";
-    private String currentState = INITIAL;
+    private final int INITIAL = 0;
+    private final int ENTER_USERNAME = 1;
+    private final int CHOOSE_CATEGORY = 2;
+    private final int QUIZZING = 3;
+    private final int WAITING = 4;
+    private final int SHOW_SCORE_THIS_ROUND = 5;
+    private final int FINAL = 6;
+    private int currentState = 0;
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
@@ -44,7 +44,7 @@ public class GamePanel extends JFrame implements ActionListener {
        // handleState();
         while (true){
             fromServer=client.receive();
-            currentState=fromServer.toString();
+            currentState=Integer.parseInt(fromServer.toString());
             System.out.println(currentState);
             handleState();
 

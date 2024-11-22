@@ -26,7 +26,7 @@ public class Player {
         }
     }
 
-    public void send(String message) {
+    public void send(Object message) {
         try {
             out.writeObject(message);
         } catch (IOException e) {

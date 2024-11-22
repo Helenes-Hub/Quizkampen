@@ -1,4 +1,4 @@
-public class Protocol {
+/*public class Protocol {
     protected static final int INITIAL = 0;
     protected static final int ENTER_USERNAME = 1;
     protected static final int CHOOSE_CATEGORY = 2;
@@ -10,29 +10,29 @@ public class Protocol {
     protected int state = INITIAL;
 
     //Denna metod behöver ordnas för fler och så rätt saker skickas
-    public String getOutput(int state) {
+    public int getOutput(int state) {
         if (state == INITIAL) {
             state = ENTER_USERNAME;
-            return "ENTER_USERNAME";
+            return 1;
         } else if (state == ENTER_USERNAME) {
             state = CHOOSE_CATEGORY;
-            return "Please enter a username: ";
+            return 2;
         } else if (state == CHOOSE_CATEGORY) {
             state = QUIZZING;
-            return "CHOOSE_CATEGORY";
-        }else if (state == QUIZZING) {
+            return 3;
+        } else if (state == QUIZZING) {
             state = WAITING;
-            return "FRÅGOR";
+            return 4;
         } else if (state == WAITING) {
             state = SHOW_SCORE_THIS_ROUND;
-            return "Waiting for your opponent. Here is your score this round: SCORE";
+            return 5;
         } else if (state == SHOW_SCORE_THIS_ROUND) {
             state = FINAL;
-            return "Score this round: SCORE";
-        } else if (state == FINAL) {
-            return "FINAL RESULT";
-        }
-        return "Unexpected error";
-    }
+            return 6;
 
+        }
+        return -1;
+    }
 }
+
+ */
