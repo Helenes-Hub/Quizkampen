@@ -59,6 +59,7 @@ public class GameFlow extends Thread {
         currentPlayer.username = (String) currentPlayer.receive();
         System.out.println(currentPlayer.username);
         player1.send(CHOOSE_CATEGORY);
+        getQuestions();
         //Sparar vald kategori som läses in av GameFlow
         player1.themeChoice = (String) player1.receive();
         //Skickar frågor till spelare
@@ -84,11 +85,28 @@ public class GameFlow extends Thread {
     }
 
     public List<QuestionClass> getQuestions() {
-        String userThemeChoice = currentPlayer.getThemeChoice();
+        String userThemeChoice ="ANIMALS";                    // currentPlayer.getThemeChoice();
         List<QuestionClass> allThemedQuestions = ClassMaker.valueOf(userThemeChoice).getQuestions();
         Collections.shuffle(allThemedQuestions);
         List<QuestionClass> questions = allThemedQuestions.subList(0, this.questionsPerRound);
         //List<String><String>questionsToClient = new ArrayList<String>();
+        ArrayList[][] questionArray= new ArrayList[3][3];
+        for (int i = 0; i < this.questionsPerRound; i++) {
+            for (int j = 0; j < 3; j++) {
+                questionArray[i][j] = new ArrayList<>(); // Initialize each ArrayList
+            }
+        }
+        for (int i = 0; i < this.questionsPerRound; i++) {
+            String currentQuestion = questions.get(i).getQuestion();
+            List<String> options=questions.get(i).getOptions();
+            questionArray[i][0].add(questions.get(i).getQuestion());
+            questionArray[i][1].addAll(questions.get(i).getOptions());
+            questionArray[i][2].add(questions.get(i).getCorrectAnswer());
+            System.out.println(questionArray[i][0]);
+            System.out.println(questionArray[i][1]);
+            System.out.println(questionArray[i][2]);
+        }
+
 
 
         return questions;
@@ -99,6 +117,9 @@ public class GameFlow extends Thread {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
     }
 }
 
