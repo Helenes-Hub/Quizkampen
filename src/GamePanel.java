@@ -238,15 +238,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
             @Override
             public void actionPerformed(ActionEvent e2) {
-                buttonA.setBackground(new Color(211, 211, 211));
-                buttonB.setBackground(new Color(211, 211, 211));
-                buttonC.setBackground(new Color(211, 211, 211));
-                buttonD.setBackground(new Color(211, 211, 211));
-
-                buttonA.setEnabled(true);
-                buttonB.setEnabled(true);
-                buttonC.setEnabled(true);
-                buttonD.setEnabled(true);
+                setDefaultButtonColor();
 
                 String answer;
                 if (clickedButton != null) {
