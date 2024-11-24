@@ -38,7 +38,8 @@ public class GamePanel extends JFrame implements ActionListener {
     private ArrayList[][] questionArray;
     private Object fromServer;
     private Object toServer;
-    //private Boolean hasSentWaitingToServer=false;
+    private int seconds=3;
+
     Client client=new Client();
 
 
@@ -49,7 +50,7 @@ public class GamePanel extends JFrame implements ActionListener {
             try {
                 fromServer = client.receive();
                 currentState = (int) fromServer;
-                System.out.println(currentState);
+                System.out.println("Nuvarande status: "+currentState);
                 handleState();
             }
             catch (Exception e){
@@ -93,7 +94,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == category2Button) {
             client.send(CHOOSE_CATEGORY);
-            toServer=category1Button.getText().toUpperCase();
+            toServer=category2Button.getText().toUpperCase();
             currentCategory = (String) toServer;
             System.out.println(currentCategory);
             client.send(toServer.toString());
@@ -238,6 +239,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
+        client.send(QUIZZING);
         questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -325,12 +327,17 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         scoreLabel.setBounds(150, 50, 400, 350);
         add(scoreLabel);
+        client.send(score);
+        client.send(WAITING);
+
     }
 
     private void checkAnswer(String answer) {
         //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
-        String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2]);
+        String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2].get(0));
+        System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {
+            System.out.println("rätt");
             score++;
         }
         currentQuestionIndex++;
@@ -339,12 +346,12 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
-            finalScorePanel();
+            roundFinishedPanel();
         }
     }
 
     private void nextQuestion() {
-        String currentQuestion = String.valueOf(questionArray[currentQuestionIndex][0]);
+        String currentQuestion = String.valueOf(questionArray[currentQuestionIndex][0].get(0));
         List<String> options = questionArray[currentQuestionIndex][1];
 
         title.setText("Question " + (currentQuestionIndex + 1));

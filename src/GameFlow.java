@@ -118,10 +118,12 @@ public class GameFlow extends Thread {
                 e.printStackTrace();
             }
 
-            if (turnToChooseCategory && player==player1)
-                player1.send(CHOOSE_CATEGORY);
-            else if (!turnToChooseCategory && player==player2)
-                player2.send(CHOOSE_CATEGORY);
+            if (turnToChooseCategory && player==player1){
+                System.out.println("Skickar 1 till kategori");
+                player1.send(CHOOSE_CATEGORY);}
+            else if (!turnToChooseCategory && player==player2){
+                System.out.println("skickar 2 till kategori");
+                player2.send(CHOOSE_CATEGORY);}
 
             else {
                 player.send(WAITING);
@@ -136,10 +138,13 @@ public class GameFlow extends Thread {
             //System.out.println(player2.username);
            // return currentState;
         }else if(currentState == WAITING){
+            System.out.println(player.username+ " is Waiting");
             if (player==player1 && currentStateP2==WAITING){
+                System.out.println("player 1 wait quiz");
                 player.send(QUIZZING);
             }
             else if (player==player2 && currentStateP1==WAITING){
+                System.out.println("player 2 wait quiz");
                 player.send(QUIZZING);
             }
             else{
@@ -155,19 +160,26 @@ public class GameFlow extends Thread {
             this.currentPlayer=player;
             player.themeChoice = (String) player.receive();
             System.out.println("mottagit "+ player.themeChoice);
+            questions=getQuestions();
             //player2.send(WAITING);
             //player1.send(QUIZZING);
             //currentStateP1=QUIZZING;
         }else if (currentState == QUIZZING){
             player.send(QUIZZING);
             System.out.println("ska skicka frågor");
-            questions=getQuestions();
             player.send(questions);
             //player2.send(WAITING);
             //player1.send(SHOW_SCORE_THIS_ROUND);
             //player2.send(QUIZZING);
             //player2.send(getQuestions());
-            //player1.pointsThisRound = Integer.parseInt((String) player1.receive());
+            try {
+                player.pointsThisRound = (int) player.receive();
+                System.out.println(player.pointsThisRound);
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             //player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
             player2.pointsThisRound = Integer.parseInt((String) player2.receive());
             player2.addPointsThisRound(counterOfRounds, player2.pointsThisRound);
