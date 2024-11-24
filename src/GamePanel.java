@@ -16,6 +16,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private final int WAITING = 4;
     private final int SHOW_SCORE_THIS_ROUND = 5;
     private final int FINAL = 6;
+    private final int WAITING_FOR_SCORE =7;
     private int currentState = 0;
 
     private JTextField title = new JTextField("Quiz");
@@ -37,6 +38,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private ArrayList[][] questionArray;
     private Object fromServer;
     private Object toServer;
+    //private Boolean hasSentWaitingToServer=false;
     Client client=new Client();
 
 
@@ -44,22 +46,29 @@ public class GamePanel extends JFrame implements ActionListener {
 
         setUpFrame();
         while (true){
-            fromServer=client.receive();
-            currentState=(int) fromServer;
-            System.out.println(currentState);
-            handleState();
+            try {
+                fromServer = client.receive();
+                currentState = (int) fromServer;
+                System.out.println(currentState);
+                handleState();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == quitButton) {
+            client.send("QUIT");
             System.exit(0);
         }
         if (e.getSource() == playButton) {
-            currentState = ENTER_USERNAME;
-            client.send(currentState);
-            handleState();
+            //currentState = ENTER_USERNAME;
+            client.send(ENTER_USERNAME);
+            //handleState();
+            return;
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
            if(!userNameField.getText().trim().isEmpty()) {
@@ -67,24 +76,31 @@ public class GamePanel extends JFrame implements ActionListener {
                System.out.println(toServer);
                client.send(toServer);
                //client.send(toServer);
-               currentState = WAITING;
-               handleState();
+               //currentState = WAITING;
+               //handleState();
                return;
            }
         }
         if (e.getSource() == category1Button) {
+            client.send(CHOOSE_CATEGORY);
             toServer=category1Button.getText().toUpperCase();
             currentCategory = (String) toServer;
             client.send(toServer.toString());
-            currentState = QUIZZING;
+            client.send(QUIZZING);
+            //currentState = QUIZZING;
             //handleState();
+            return;
         }
         if (e.getSource() == category2Button) {
+            client.send(CHOOSE_CATEGORY);
             toServer=category1Button.getText().toUpperCase();
             currentCategory = (String) toServer;
+            System.out.println(currentCategory);
             client.send(toServer.toString());
-            currentState = QUIZZING;
+            client.send(QUIZZING);
+            //currentState = QUIZZING;
             //handleState();
+            return;
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
             JButton clickedButton = (JButton) e.getSource();
@@ -107,8 +123,15 @@ public class GamePanel extends JFrame implements ActionListener {
                 startGamePanel();
                 break;
             case WAITING:
+
                 waitingForOtherPlayerPanel();
                 client.send(currentState);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 break;
             case SHOW_SCORE_THIS_ROUND:
                 roundFinishedPanel();
@@ -215,7 +238,6 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
-
         questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -354,7 +376,7 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreField.setFont(new Font("Impact", Font.BOLD, 30));
         scoreField.setBorder(null);
         scoreField.setBounds(200, 300, 300, 100);
-        scoreField.setText("Score: " + score + "/" + (int) Arrays.stream(questionArray).count());
+        scoreField.setText("Score: " + score + "/" + (questionArray[0]).length);
     }
 
 
