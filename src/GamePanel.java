@@ -199,13 +199,8 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void roundFinishedPanel() {
         clearPanel();
-
-        JLabel scoreLabel = new JLabel("Score this round: " + score);
-        scoreLabel.setFont(new Font("Impact", Font.BOLD, 30));
-        scoreLabel.setForeground(new Color(211, 211, 211));
-        scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        scoreLabel.setBounds(150, 50, 400, 350);
-        add(scoreLabel);
+        JLabel scoreLabel = new JLabel();
+        setUpLabel(scoreLabel, 150, 50, 400, 350, "Score this round: " + score);
     }
 
     private void checkAnswer(String answer) {
