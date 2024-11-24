@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
@@ -28,6 +27,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonB = new JButton();
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
+    private Timer questionTimer;
 
     private ClassMaker currentCategory;
     private int currentQuestionIndex;
@@ -67,8 +67,42 @@ public class GamePanel extends JFrame implements ActionListener {
             handleState();
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
+            QuestionClass currentQuestion = questions.get(currentQuestionIndex);
             JButton clickedButton = (JButton) e.getSource();
-            checkAnswer(clickedButton.getText());
+            String correctAnswer = currentQuestion.getCorrectAnswer();
+
+            if (clickedButton.getText().equals(correctAnswer)) {
+                clickedButton.setBackground(new Color(75, 181, 67));
+            } else {
+                clickedButton.setBackground(new Color(181, 67, 67));
+                getButtonWithAnswer(correctAnswer).setBackground(new Color(75, 181, 67));
+            }
+
+            buttonA.setEnabled(false);
+            buttonB.setEnabled(false);
+            buttonC.setEnabled(false);
+            buttonD.setEnabled(false);
+
+            Timer pauseTimer = new Timer(1000, new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e2) {
+                    buttonA.setBackground(new Color(211, 211, 211));
+                    buttonB.setBackground(new Color(211, 211, 211));
+                    buttonC.setBackground(new Color(211, 211, 211));
+                    buttonD.setBackground(new Color(211, 211, 211));
+
+                    buttonA.setEnabled(true);
+                    buttonB.setEnabled(true);
+                    buttonC.setEnabled(true);
+                    buttonD.setEnabled(true);
+
+                    checkAnswer(clickedButton.getText());
+                }
+            });
+
+            pauseTimer.setRepeats(false);
+            pauseTimer.start();
         }
     }
 
@@ -294,6 +328,13 @@ public class GamePanel extends JFrame implements ActionListener {
             finalScorePanel();
         }
     }
+
+    private JButton getButtonWithAnswer(String answer) {
+        if (buttonA.getText().equals(answer)) return buttonA;
+        if (buttonB.getText().equals(answer)) return buttonB;
+        if (buttonC.getText().equals(answer)) return buttonC;
+        return buttonD;
+        }
 
     private void nextQuestion() {
         QuestionClass currentQuestion = questions.get(currentQuestionIndex);
