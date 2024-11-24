@@ -22,7 +22,6 @@ public class GameFlow extends Thread {
     private Player player1;
     private Player player2;
     private Player currentPlayer;
-    //private final Protocol protocol = new Protocol();
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -51,7 +50,6 @@ public class GameFlow extends Thread {
     }
 
     public void run() {
-        //----properties load and set end
         int temp = 4;
 
         if (currentState == INITIAL){
@@ -110,31 +108,21 @@ public class GameFlow extends Thread {
         List<QuestionClass> allThemedQuestions = ClassMaker.valueOf(userThemeChoice).getQuestions();
         Collections.shuffle(allThemedQuestions);
         List<QuestionClass> questions = allThemedQuestions.subList(0, this.questionsPerRound);
-        ArrayList[][] questionArray= new ArrayList[3][3];
+
+        ArrayList[][] questionArray= new ArrayList[questionsPerRound][];
         for (int i = 0; i < this.questionsPerRound; i++) {
             for (int j = 0; j < 3; j++) {
-                questionArray[i][j] = new ArrayList<>(); // Initialize each ArrayList
+                questionArray[i][j] = new ArrayList<>();
             }
         }
         for (int i = 0; i < this.questionsPerRound; i++) {
-            String currentQuestion = questions.get(i).getQuestion();
-            List<String> options = questions.get(i).getOptions();
             questionArray[i][0].add(questions.get(i).getQuestion());
             questionArray[i][1].addAll(questions.get(i).getOptions());
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
-            System.out.println(questionArray[i][0]);
-            System.out.println(questionArray[i][1]);
-            System.out.println(questionArray[i][2]);
         }
         return questionArray;
     }
 
-    public boolean winchecker(String userAnswer, String correctAnswer) {
-        if (userAnswer.equals(correctAnswer)) {
-            return true;
-        }
-        return false;
-    }
 }
 
 
