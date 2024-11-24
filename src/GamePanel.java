@@ -327,7 +327,7 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
         scoreLabel.setBounds(150, 50, 400, 350);
         add(scoreLabel);
-        client.send(score);
+
         client.send(WAITING);
 
     }
@@ -337,7 +337,6 @@ public class GamePanel extends JFrame implements ActionListener {
         String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2].get(0));
         System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {
-            System.out.println("rätt");
             score++;
         }
         currentQuestionIndex++;
@@ -346,6 +345,7 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
+            client.send(score);
             roundFinishedPanel();
         }
     }

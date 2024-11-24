@@ -125,7 +125,7 @@ public class GameFlow extends Thread {
                 System.out.println("skickar 2 till kategori");
                 player2.send(CHOOSE_CATEGORY);}
 
-            else {
+            else if (player == player1 || player == player2){
                 player.send(WAITING);
             }
             //player2.send(WAITING);
@@ -161,11 +161,12 @@ public class GameFlow extends Thread {
             player.themeChoice = (String) player.receive();
             System.out.println("mottagit "+ player.themeChoice);
             questions=getQuestions();
+            player.send(QUIZZING);
             //player2.send(WAITING);
             //player1.send(QUIZZING);
             //currentStateP1=QUIZZING;
         }else if (currentState == QUIZZING){
-            player.send(QUIZZING);
+            //player.send(QUIZZING);
             System.out.println("ska skicka frågor");
             player.send(questions);
             //player2.send(WAITING);
@@ -181,8 +182,8 @@ public class GameFlow extends Thread {
             }
 
             //player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
-            player2.pointsThisRound = Integer.parseInt((String) player2.receive());
-            player2.addPointsThisRound(counterOfRounds, player2.pointsThisRound);
+            //player2.pointsThisRound = Integer.parseInt((String) player2.receive());
+            //player2.addPointsThisRound(counterOfRounds, player2.pointsThisRound);
             counterOfRounds++;
         }else if (currentState == SHOW_SCORE_THIS_ROUND){
             player1.send(SHOW_SCORE_THIS_ROUND);
