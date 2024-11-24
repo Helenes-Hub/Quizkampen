@@ -125,12 +125,9 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void enterUserNamePanel() {
         clearPanel();
-
         JLabel userNameLabel = new JLabel();
         setUpLabel(userNameLabel, 150, 50, 400, 350, "Enter your username");
-
         setUpTextField(userNameField, 150, 275, 400, 50, "", true);
-
         setUpButton(enterNameButton, 250, 350, 200, 50, "Enter");
 
     }
@@ -138,11 +135,9 @@ public class GamePanel extends JFrame implements ActionListener {
     private void showCategoriesPanel() {
         userNameField.setText("");
         clearPanel();
-
         add(title);
         title.setText("Select a category");
         title.setFont(new Font("Impact", Font.BOLD, 40));
-
         setUpButton(category1Button, 100, 300, 200, 100, "Animals");
         setUpButton(category2Button, 400, 300, 200, 100, "Science");
 
@@ -156,9 +151,7 @@ public class GamePanel extends JFrame implements ActionListener {
         QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         List<String> options = currentQuestion.getOptions();
 
-        getContentPane().removeAll();
-        revalidate();
-        repaint();
+        clearPanel();
 
         add(title);
         title.setBounds(150, 50, 400, 100);
@@ -166,7 +159,6 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setFont(new Font("Impact", Font.BOLD, 70));
 
         setUpLabel(question, 50, 200, 600, 100, currentQuestion.getQuestion());
-
         setUpButton(buttonA, 45, 350, 300, 100, options.get(0));
         setUpButton(buttonB, 355, 350, 300, 100, options.get(1));
         setUpButton(buttonC, 45, 470, 300, 100, options.get(2));
