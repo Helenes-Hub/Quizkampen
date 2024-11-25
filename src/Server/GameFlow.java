@@ -64,7 +64,7 @@ public class GameFlow extends Thread {
     public void runPlayer1() {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
-        properties(player1, INITIAL);
+            player1.send(INITIAL);
             player1.setTurnToChoose(true);
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
                 System.out.println("tråd 1 aktiv");
@@ -89,7 +89,7 @@ public class GameFlow extends Thread {
     public void runPlayer2() {
         Thread player2Thread = new Thread(() -> {
             Object message = null;
-            properties(player2, INITIAL);
+            player2.send(INITIAL);
             while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
                 System.out.println("tråd 2 aktiv");
 
@@ -116,8 +116,8 @@ public class GameFlow extends Thread {
 
         synchronized (this) {
             if (player1.hasPlayedRound && player2.hasPlayedRound) {
-                player1.setHasPlayedRound(false);
-                player2.setHasPlayedRound(false);
+                //player1.setHasPlayedRound(false);
+                //player2.setHasPlayedRound(false);
             }
 
             switch (player.getCurrentState()) {
@@ -129,12 +129,13 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case ENTER_USERNAME:
+                    if (player.username==null){
                     try {
                         player.username = (String) player.receive();
                         System.out.println(player.username);
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }
+                    }}
                     if (message.equals("STEP_FINISHED")) {
                         if (player.turnToChoose) {
                             player.setCurrentState(CHOOSE_CATEGORY);
@@ -145,34 +146,68 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case CHOOSE_CATEGORY:
+                    if (player.themeChoice==null){
+                    try {
+                        currentPlayer=player;
+                        player.themeChoice = (String) player.receive();
+                        System.out.println(player.themeChoice);
+                        questions=getQuestions();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }}
                     if (message.equals("STEP_FINISHED")) {
                         player.setCurrentState(QUIZZING);
                         player.send(QUIZZING);
                     }
                     break;
                 case QUIZZING:
-                    if (message.equals("STEP_FINISHED")) {
-                        player.turnToChoose = false;
-                        player.hasPlayedRound = true;
-                        player.setCurrentState(WAITING);
-                        player.send(WAITING);
+                    if ("STEP_FINISHED".equals(message) || message.equals(WAITING)) {
+                        try {
+                            player.send(questions);
+                            //vart kommer denna ifrån? det är en extra
+                            //STEP_FINISHED istället för score
+                            System.out.println(player.receive().toString());
+                            player.pointsThisRound = (int) player.receive();
+                            player.setHasPlayedRound(true);
+                            player.setCurrentState(WAITING);
+                            player.send(WAITING);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        //player.turnToChoose = false;
                         //Ta emot in poäng
                     }
                     break;
                 case WAITING:
-                    if (player.getOpponent().hasPlayedRound && message.equals("STEP_FINISHED")) {
+                    System.out.println(player1.hasPlayedRound);
+                    if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
+                        System.out.println(player+" kommer hit");
                         player.setCurrentState(QUIZZING);
                         player.send(QUIZZING);
+                    }
+                    else if (player.turnToChoose && (!player.hasPlayedRound)) {
+                        player.setCurrentState(CHOOSE_CATEGORY);
+                        player.send(CHOOSE_CATEGORY);
 
-                    } else {
+                    } else if (roundOver) {
                         player.setCurrentState(SHOW_SCORE_THIS_ROUND);
                         player.send(SHOW_SCORE_THIS_ROUND);
+                        //måste flippa turn to choose boolean här
+                    }
+                    else {
+                        player.setCurrentState(WAITING);
+                        player.send(WAITING);
                     }
                     break;
                 case SHOW_SCORE_THIS_ROUND:
-                    if (message.equals("STEP_FINISHED")) {
+                    if (message.equals("STEP_FINISHED")&& rounds>=counterOfRounds) {
                         player.setCurrentState(FINAL);
                         player.send(FINAL);
+                    }
+                    else{
+                        player.setCurrentState(WAITING);
+                        player.send(WAITING);
                     }
             }
         }

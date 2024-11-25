@@ -129,6 +129,7 @@ public class GamePanel extends JFrame implements ActionListener {
                 //client.send(currentState);
                 waitingForOtherPlayerPanel();
                 try {
+                    client.send(WAITING);
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
