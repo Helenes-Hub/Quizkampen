@@ -32,6 +32,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
 
+
     private String currentCategory;
     private int currentQuestionIndex;
     private int score;
@@ -107,6 +108,7 @@ public class GamePanel extends JFrame implements ActionListener {
             JButton clickedButton = (JButton) e.getSource();
             checkAnswer(clickedButton.getText());
         }
+
     }
 
     private void handleState() {
@@ -125,8 +127,8 @@ public class GamePanel extends JFrame implements ActionListener {
                 break;
             case WAITING:
 
-                waitingForOtherPlayerPanel();
                 client.send(currentState);
+                waitingForOtherPlayerPanel();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -239,7 +241,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
-       // client.send(QUIZZING);
+        client.send(QUIZZING);
         questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -328,14 +330,12 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreLabel.setBounds(150, 50, 400, 350);
         add(scoreLabel);
 
-        //client.send(WAITING);
-
     }
 
     private void checkAnswer(String answer) {
         //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2].get(0));
-        System.out.println(correctAnswer);
+        //System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {
             score++;
             System.out.println("nuvarance score: "+ score);

@@ -145,6 +145,7 @@ public class GameFlow extends Thread {
                 System.out.println("skickar 2 till kategori");
                 player2.send(CHOOSE_CATEGORY);
                 player2.setTurnToChoose(false);}
+            else{player.send(WAITING);}
 
 
         }else if (currentState == CHOOSE_CATEGORY){
