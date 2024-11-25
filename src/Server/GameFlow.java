@@ -124,7 +124,6 @@ public class GameFlow extends Thread {
                 case INITIAL:
                     if (message.equals("STEP_FINISHED")) {
                         player.setCurrentState(ENTER_USERNAME);
-                        System.out.println(player.username);
                         player.send(ENTER_USERNAME);
                     }
                     break;
@@ -153,6 +152,8 @@ public class GameFlow extends Thread {
                         currentPlayer=player;
                         player.themeChoice = (String) player.receive();
                         System.out.println(player.themeChoice);
+                        player.turnToChoose = false;
+                        player.getOpponent().turnToChoose = true;
                         questions=getQuestions();
                     } catch (Exception e) {
                         e.printStackTrace();
