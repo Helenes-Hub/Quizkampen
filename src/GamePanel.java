@@ -39,7 +39,6 @@ public class GamePanel extends JFrame implements ActionListener {
     private ArrayList[][] questionArray;
     private Object fromServer;
     private Object toServer;
-    private int seconds=3;
 
     Client client=new Client();
 
@@ -338,7 +337,7 @@ public class GamePanel extends JFrame implements ActionListener {
         //System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {
             score++;
-            System.out.println("nuvarance score: "+ score);
+            //System.out.println("nuvarande score: "+ score);
         }
         currentQuestionIndex++;
 
@@ -347,10 +346,10 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         else {
             System.out.println("skickar poäng till server: "+ score);
-            client.send(score);
             currentState=WAITING;
+            client.send(score);
             client.send(WAITING);
-            waitingForOtherPlayerPanel();
+            //waitingForOtherPlayerPanel();
         }
     }
 

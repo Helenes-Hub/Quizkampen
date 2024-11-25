@@ -60,6 +60,7 @@ public class GameFlow extends Thread {
     public void runPlayer1(){
         Thread player1Thread=new Thread(() -> {
             properties(player1, currentStateP1);
+            player1.setTurnToChoose(true);
             while (currentStateP1 != QUIT || currentStateP2 != QUIT) {
                 System.out.println("tråd 1 aktiv");
 
@@ -81,6 +82,7 @@ public class GameFlow extends Thread {
 
     public void runPlayer2(){
         Thread player2Thread=new Thread(() -> {
+
             properties(player2, currentStateP2);
             while (currentStateP2 != QUIT || currentStateP1 != QUIT) {
                 System.out.println("tråd 2 aktiv");
@@ -104,7 +106,8 @@ public class GameFlow extends Thread {
     public void properties(Player player, int currentState) {
 
         if (player1.hasPlayedRound && player2.hasPlayedRound) {
-            roundOver = true;
+            player1.setHasPlayedRound(false);
+            player2.setHasPlayedRound(false);
         }
 
         if (currentState == INITIAL){
@@ -121,14 +124,14 @@ public class GameFlow extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            player1.setTurnToChoose(true);
+
 
             player.send(WAITING);
 
         }else if(currentState == WAITING){
 
             System.out.println(player.username+ " is Waiting");
-            System.out.println("player1 boolean: "+ player1.hasPlayedRound);
+            //System.out.println("player1 boolean: "+ player1.hasPlayedRound);
             if (player==player1 && player2.hasPlayedRound){
                 System.out.println("player 1 wait quiz");
                 player.send(QUIZZING);
@@ -137,14 +140,18 @@ public class GameFlow extends Thread {
                 System.out.println("player 2 wait quiz");
                 player.send(QUIZZING);
             }
-            else if (player==player1 && player.turnToChoose){
+            else if (player==player1 && player.turnToChoose) {
                 System.out.println("Skickar 1 till kategori");
+                //player1.setTurnToChoose(false);
+                //player2.setTurnToChoose(true);
                 player1.send(CHOOSE_CATEGORY);
-                player1.setTurnToChoose(false);}
+            }
             else if (player==player2 && player.turnToChoose){
                 System.out.println("skickar 2 till kategori");
+                //player2.setTurnToChoose(false);
+                //player1.setTurnToChoose(true);
                 player2.send(CHOOSE_CATEGORY);
-                player2.setTurnToChoose(false);}
+            }
             else{player.send(WAITING);}
 
 
@@ -155,7 +162,7 @@ public class GameFlow extends Thread {
             System.out.println("mottagit "+ player.themeChoice);
             questions=getQuestions();
             player.send(QUIZZING);
-            player.setTurnToChoose(false);
+            //player.setTurnToChoose(false);
 
         }else if (currentState == QUIZZING){
             //player.send(QUIZZING);
@@ -167,6 +174,7 @@ public class GameFlow extends Thread {
                 System.out.println(player.pointsThisRound);
                 player.setHasPlayedRound(true);
                 counterOfRounds++;
+                //player.send(WAITING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
