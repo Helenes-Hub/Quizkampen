@@ -1,4 +1,4 @@
-package Client;
+ppackage Client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
 
+
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
     private final int CHOOSE_CATEGORY = 2;
@@ -18,6 +19,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private final int FINAL = 6;
     private final int WAITING_FOR_SCORE =7;
     private int currentState = 0;
+
 
     private JTextField title = new JTextField("Quiz");
     private JTextField question = new JTextField();
@@ -67,7 +69,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == playButton) {
             //currentState = ENTER_USERNAME;
-            client.send(ENTER_USERNAME);
+            client.send("STEP_FINISHED");
             //handleState();
             return;
         }
@@ -76,7 +78,7 @@ public class GamePanel extends JFrame implements ActionListener {
                toServer=userNameField.getText().trim();
                System.out.println(toServer);
                client.send(toServer);
-               //client.send(toServer);
+               client.send("STEP_FINISHED");
                //currentState = WAITING;
                //handleState();
                return;
@@ -84,21 +86,21 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == category1Button) {
             toServer=category1Button.getText().toUpperCase();
-            client.send(CHOOSE_CATEGORY);
+            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             client.send(toServer.toString());
-            client.send(QUIZZING);
+            client.send("STEP_FINISHED");
             //currentState = QUIZZING;
             //handleState();
             return;
         }
         if (e.getSource() == category2Button) {
             toServer=category2Button.getText().toUpperCase();
-            client.send(CHOOSE_CATEGORY);
+            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             System.out.println(currentCategory);
             client.send(toServer.toString());
-            //client.send(QUIZZING);
+            client.send("STEP_FINISHED");
             //currentState = QUIZZING;
             //handleState();
             return;
@@ -107,7 +109,6 @@ public class GamePanel extends JFrame implements ActionListener {
             JButton clickedButton = (JButton) e.getSource();
             checkAnswer(clickedButton.getText());
         }
-
     }
 
     private void handleState() {
@@ -125,18 +126,18 @@ public class GamePanel extends JFrame implements ActionListener {
                 startGamePanel();
                 break;
             case WAITING:
-
-                client.send(currentState);
+                //client.send(currentState);
                 waitingForOtherPlayerPanel();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
+                //client.send("STEP_FINISHED"); Ej nödvändigt?
                 break;
             case SHOW_SCORE_THIS_ROUND:
                 roundFinishedPanel();
+                //Knapp för att gå vidare från denna panel? I actionEvent från den client.send("STEP_FINISHED");
                 break;
             case FINAL:
                 finalScorePanel();
@@ -240,7 +241,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
-        client.send(QUIZZING);
+        //client.send(QUIZZING);
         questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -346,9 +347,9 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         else {
             System.out.println("skickar poäng till server: "+ score);
-            currentState=WAITING;
+            //currentState=WAITING;
             client.send(score);
-            client.send(WAITING);
+            client.send("STEP_FINISHED");
             //waitingForOtherPlayerPanel();
         }
     }
