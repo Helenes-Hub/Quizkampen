@@ -239,7 +239,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
-        client.send(QUIZZING);
+       // client.send(QUIZZING);
         questionArray = (ArrayList[][]) client.receive();;
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
@@ -328,7 +328,7 @@ public class GamePanel extends JFrame implements ActionListener {
         scoreLabel.setBounds(150, 50, 400, 350);
         add(scoreLabel);
 
-        client.send(WAITING);
+        //client.send(WAITING);
 
     }
 
@@ -338,6 +338,7 @@ public class GamePanel extends JFrame implements ActionListener {
         System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {
             score++;
+            System.out.println("nuvarance score: "+ score);
         }
         currentQuestionIndex++;
 
@@ -345,8 +346,10 @@ public class GamePanel extends JFrame implements ActionListener {
             nextQuestion();
         }
         else {
+            System.out.println("skickar poäng till server: "+ score);
             client.send(score);
-            roundFinishedPanel();
+            currentState=WAITING;
+            client.send(WAITING);
         }
     }
 

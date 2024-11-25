@@ -26,7 +26,7 @@ public class GameFlow extends Thread {
     private Player player2;
     private Player currentPlayer;
     private Object questions;
-    private Boolean turnToChooseCategory=true;
+    private Boolean roundOver=false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -103,6 +103,10 @@ public class GameFlow extends Thread {
 
     public void properties(Player player, int currentState) {
 
+        if (player1.hasPlayedRound && player2.hasPlayedRound) {
+            roundOver = true;
+        }
+
         if (currentState == INITIAL){
             player.send(INITIAL);
             //currentState = (int) player.receive();
@@ -117,62 +121,48 @@ public class GameFlow extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            player1.setTurnToChoose(true);
 
-            if (turnToChooseCategory && player==player1){
-                System.out.println("Skickar 1 till kategori");
-                player1.send(CHOOSE_CATEGORY);}
-            else if (!turnToChooseCategory && player==player2){
-                System.out.println("skickar 2 till kategori");
-                player2.send(CHOOSE_CATEGORY);}
+            player.send(WAITING);
 
-            else if (player == player1 || player == player2){
-                player.send(WAITING);
-            }
-            //player2.send(WAITING);
-
-            //currentState = (int) player1.receive();
-            //temp = (int) player2.receive();
-            //System.out.println(currentState);
-            //System.out.println(currentState);
-            //System.out.println(player1.username);
-            //System.out.println(player2.username);
-           // return currentState;
         }else if(currentState == WAITING){
+
             System.out.println(player.username+ " is Waiting");
-            if (player==player1 && currentStateP2==WAITING){
+            System.out.println("player1 boolean: "+ player1.hasPlayedRound);
+            if (player==player1 && player2.hasPlayedRound){
                 System.out.println("player 1 wait quiz");
                 player.send(QUIZZING);
             }
-            else if (player==player2 && currentStateP1==WAITING){
+            else if (player==player2 && player1.hasPlayedRound){
                 System.out.println("player 2 wait quiz");
                 player.send(QUIZZING);
             }
+            else if (player==player1 && player.turnToChoose){
+                System.out.println("Skickar 1 till kategori");
+                player1.send(CHOOSE_CATEGORY);
+                player1.setTurnToChoose(false);}
+            else if (player==player2 && player.turnToChoose){
+                System.out.println("skickar 2 till kategori");
+                player2.send(CHOOSE_CATEGORY);
+                player2.setTurnToChoose(false);}
             else{
                 player.send(WAITING);
             }
-            //player1.send(CHOOSE_CATEGORY);
-            //System.out.println("skickas en gång?");
-            //player2.send(WAITING);
+
         }else if (currentState == CHOOSE_CATEGORY){
-            //player1.send(CHOOSE_CATEGORY);
-            //player1Response=player.receive();
-            //System.out.println(player1Response);
+
             this.currentPlayer=player;
             player.themeChoice = (String) player.receive();
             System.out.println("mottagit "+ player.themeChoice);
             questions=getQuestions();
             player.send(QUIZZING);
-            //player2.send(WAITING);
-            //player1.send(QUIZZING);
-            //currentStateP1=QUIZZING;
+            player.setTurnToChoose(false);
+
         }else if (currentState == QUIZZING){
             //player.send(QUIZZING);
             System.out.println("ska skicka frågor");
             player.send(questions);
-            //player2.send(WAITING);
-            //player1.send(SHOW_SCORE_THIS_ROUND);
-            //player2.send(QUIZZING);
-            //player2.send(getQuestions());
+
             try {
                 player.pointsThisRound = (int) player.receive();
                 System.out.println(player.pointsThisRound);
@@ -180,11 +170,9 @@ public class GameFlow extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            //player1.addPointsThisRound(counterOfRounds, player1.pointsThisRound);
-            //player2.pointsThisRound = Integer.parseInt((String) player2.receive());
-            //player2.addPointsThisRound(counterOfRounds, player2.pointsThisRound);
+            player.setHasPlayedRound(true);
             counterOfRounds++;
+
         }else if (currentState == SHOW_SCORE_THIS_ROUND){
             player1.send(SHOW_SCORE_THIS_ROUND);
             player2.send(SHOW_SCORE_THIS_ROUND);

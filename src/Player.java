@@ -10,8 +10,29 @@ public class Player {
     Socket socket;
     String username;
     String themeChoice;
+    Boolean turnToChoose=false;
+    Boolean hasPlayedRound=false;
+    int currentState;
     int pointsThisRound;
     int[] pointsAllRounds;
+
+    public Boolean getHasPlayedRound() {
+        return hasPlayedRound;
+    }
+
+    public void setHasPlayedRound(Boolean hasPlayedRound) {
+        this.hasPlayedRound = hasPlayedRound;
+    }
+
+    public Boolean getTurnToChoose() {
+        return turnToChoose;
+    }
+
+    public void setTurnToChoose(Boolean turnToChoose) {
+        this.turnToChoose = turnToChoose;
+    }
+
+
 
 
     public Player(Socket socket) {
