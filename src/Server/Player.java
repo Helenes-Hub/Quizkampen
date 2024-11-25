@@ -12,11 +12,20 @@ public class Player {
     Socket socket;
     String username;
     String themeChoice;
-    Boolean turnToChoose=false;
-    Boolean hasPlayedRound=false;
-    int currentState;
+    Boolean turnToChoose = false;
+    Boolean hasPlayedRound = false;
     int pointsThisRound;
     int[] pointsAllRounds;
+
+    private final int INITIAL = 0;
+    private final int ENTER_USERNAME = 1;
+    private final int CHOOSE_CATEGORY = 2;
+    private final int QUIZZING = 3;
+    private final int WAITING = 4;
+    private final int SHOW_SCORE_THIS_ROUND = 5;
+    private final int FINAL = 6;
+    private final int WAITING_FOR_SCORE = 7;
+    private int currentState = 0;
 
     public Boolean getHasPlayedRound() {
         return hasPlayedRound;
@@ -34,17 +43,15 @@ public class Player {
         this.turnToChoose = turnToChoose;
     }
 
-
-
-
     public Player(Socket socket) {
         this.socket = socket;
 
-        try{this.out = new ObjectOutputStream(socket.getOutputStream());
+        try {
+            this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream(socket.getInputStream());
 
 
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -57,17 +64,21 @@ public class Player {
         }
     }
 
-        public Object receive()  {
+    public Object receive() {
         try {
             return in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
-        }
+    }
 
     public void setOpponent(Player opponent) {
         this.opponent = opponent;
+    }
+
+    public Player getOpponent() {
+        return opponent;
     }
 
     public void setRounds(int rounds) {
@@ -82,7 +93,7 @@ public class Player {
         return themeChoice;
     }
 
-    public void addPointsThisRound(int roundNumber,int pointsThisRound) {
+    public void addPointsThisRound(int roundNumber, int pointsThisRound) {
         pointsAllRounds[roundNumber] = pointsThisRound;
     }
 
@@ -94,16 +105,56 @@ public class Player {
         return pointsAllRounds;
     }
 
-    public int getTotalScore(){
+    public int getTotalScore() {
         int totalScore = 0;
-        for(int points : pointsAllRounds){
+        for (int points : pointsAllRounds) {
             totalScore = totalScore + points;
         }
         return totalScore;
     }
 
+    public int getINITIAL() {
+        return INITIAL;
+    }
+
+    public int getENTER_USERNAME() {
+        return ENTER_USERNAME;
+    }
+
+    public int getCHOOSE_CATEGORY() {
+        return CHOOSE_CATEGORY;
+    }
+
+    public int getQUIZZING() {
+        return QUIZZING;
+    }
+
+    public int getWAITING() {
+        return WAITING;
+    }
+
+    public int getSHOW_SCORE_THIS_ROUND() {
+        return SHOW_SCORE_THIS_ROUND;
+    }
+
+    public int getFINAL() {
+        return FINAL;
+    }
+
+    public int getWAITING_FOR_SCORE() {
+        return WAITING_FOR_SCORE;
+    }
+
+    public int getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(int currentState) {
+        this.currentState = currentState;
+    }
+
     public void close() {
-        try{
+        try {
             in.close();
             out.close();
             socket.close();
