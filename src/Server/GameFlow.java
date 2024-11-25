@@ -42,7 +42,7 @@ public class GameFlow extends Thread {
         //loading properties
         Properties p = new Properties();
         try {
-            p.load(new FileInputStream("src/Settings.properties"));
+            p.load(new FileInputStream("src/Server/Settings.properties"));
         } catch (Exception e) {
             System.out.println("filen hittades inte");
         }
@@ -110,10 +110,8 @@ public class GameFlow extends Thread {
 
     synchronized (this) {
         if (player1.hasPlayedRound && player2.hasPlayedRound) {
-            player1.setHasPlayedRound(false);
-            player2.setHasPlayedRound(false);
+            updateTurnToChoose(player, player.opponent);
         }
-
         if (currentState == INITIAL) {
             player.send(INITIAL);
             //currentState = (int) player.receive();
@@ -143,11 +141,12 @@ public class GameFlow extends Thread {
                 player.send(QUIZZING);
             } else if (player == player1 && player.turnToChoose) {
                 System.out.println("Skickar 1 till kategori");
-                //player1.setTurnToChoose(false);
+               // currentStateP1=CHOOSE_CATEGORY;
                 //player2.setTurnToChoose(true);
                 player1.send(CHOOSE_CATEGORY);
             } else if (player == player2 && player.turnToChoose) {
                 System.out.println("skickar 2 till kategori");
+               // currentStateP2=CHOOSE_CATEGORY;
                 //player2.setTurnToChoose(false);
                 //player1.setTurnToChoose(true);
                 player2.send(CHOOSE_CATEGORY);
@@ -158,7 +157,7 @@ public class GameFlow extends Thread {
 
         } else if (currentState == CHOOSE_CATEGORY) {
 
-            //this.currentPlayer=player;
+            this.currentPlayer=player;
             try {
                 player.themeChoice = (String) player.receive();
                 System.out.println("mottagit " + player.themeChoice);
@@ -167,6 +166,7 @@ public class GameFlow extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
 
 
             //player.setTurnToChoose(false);
@@ -181,7 +181,7 @@ public class GameFlow extends Thread {
                 System.out.println(player.pointsThisRound);
                 player.setHasPlayedRound(true);
                 counterOfRounds++;
-                //player.send(WAITING);
+                player.send(WAITING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -262,6 +262,11 @@ public class GameFlow extends Thread {
         }
 
     } */
+
+        public synchronized void updateTurnToChoose(Player current, Player opponent) {
+            current.setTurnToChoose(false);
+            opponent.setTurnToChoose(true);
+        }
 
     public ArrayList[][] getQuestions() {
         String userThemeChoice = currentPlayer.getThemeChoice();

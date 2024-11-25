@@ -84,7 +84,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == category1Button) {
             toServer=category1Button.getText().toUpperCase();
-            client.send(CHOOSE_CATEGORY);
+            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             client.send(toServer.toString());
             client.send(QUIZZING);
@@ -94,7 +94,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == category2Button) {
             toServer=category2Button.getText().toUpperCase();
-            client.send(CHOOSE_CATEGORY);
+            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             System.out.println(currentCategory);
             client.send(toServer.toString());
@@ -119,9 +119,11 @@ public class GamePanel extends JFrame implements ActionListener {
                 enterUserNamePanel();
                 break;
             case CHOOSE_CATEGORY:
+                client.send(CHOOSE_CATEGORY);
                 showCategoriesPanel();
                 break;
             case QUIZZING:
+                client.send(QUIZZING);
                 startGamePanel();
                 break;
             case WAITING:
@@ -212,6 +214,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void showCategoriesPanel() {
+
         userNameField.setText("");
         getContentPane().removeAll();
         revalidate();
@@ -240,8 +243,12 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void startGamePanel() {
-        client.send(QUIZZING);
-        questionArray = (ArrayList[][]) client.receive();;
+        try {
+            questionArray = (ArrayList[][]) client.receive();;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
@@ -348,7 +355,7 @@ public class GamePanel extends JFrame implements ActionListener {
             System.out.println("skickar poäng till server: "+ score);
             currentState=WAITING;
             client.send(score);
-            client.send(WAITING);
+            //client.send(WAITING);
             //waitingForOtherPlayerPanel();
         }
     }
