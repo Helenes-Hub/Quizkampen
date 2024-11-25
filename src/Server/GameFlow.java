@@ -64,7 +64,7 @@ public class GameFlow extends Thread {
     public void runPlayer1() {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
-            properties(player1, message);
+        properties(player1, INITIAL);
             player1.setTurnToChoose(true);
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
                 System.out.println("tråd 1 aktiv");
@@ -89,7 +89,7 @@ public class GameFlow extends Thread {
     public void runPlayer2() {
         Thread player2Thread = new Thread(() -> {
             Object message = null;
-            properties(player2, message);
+            properties(player2, INITIAL);
             while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
                 System.out.println("tråd 2 aktiv");
 
@@ -112,7 +112,7 @@ public class GameFlow extends Thread {
     //syncronized
 
     public void properties(Player player, Object message) {
-        player.send(INITIAL);
+        //player.send(INITIAL);
 
         synchronized (this) {
             if (player1.hasPlayedRound && player2.hasPlayedRound) {
@@ -122,7 +122,7 @@ public class GameFlow extends Thread {
 
             switch (player.getCurrentState()) {
                 case INITIAL:
-                    if (message == "STEP_FINISHED") {
+                    if (message.equals("STEP_FINISHED")) {
                         player.setCurrentState(ENTER_USERNAME);
                         System.out.println(player.username);
                         player.send(ENTER_USERNAME);
@@ -135,7 +135,7 @@ public class GameFlow extends Thread {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (message == "STEP_FINISHED") {
+                    if (message.equals("STEP_FINISHED")) {
                         if (player.turnToChoose) {
                             player.setCurrentState(CHOOSE_CATEGORY);
                             player.send(CHOOSE_CATEGORY);
@@ -145,21 +145,22 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case CHOOSE_CATEGORY:
-                    if (message == "STEP_FINISHED") {
+                    if (message.equals("STEP_FINISHED")) {
                         player.setCurrentState(QUIZZING);
                         player.send(QUIZZING);
                     }
                     break;
                 case QUIZZING:
-                    if (message == "STEP_FINISHED") {
+                    if (message.equals("STEP_FINISHED")) {
                         player.turnToChoose = false;
                         player.hasPlayedRound = true;
                         player.setCurrentState(WAITING);
                         player.send(WAITING);
+                        //Ta emot in poäng
                     }
                     break;
                 case WAITING:
-                    if (player.getOpponent().hasPlayedRound && message == "STEP_FINISHED") {
+                    if (player.getOpponent().hasPlayedRound && message.equals("STEP_FINISHED")) {
                         player.setCurrentState(QUIZZING);
                         player.send(QUIZZING);
 
@@ -169,7 +170,7 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case SHOW_SCORE_THIS_ROUND:
-                    if (message == "STEP_FINISHED") {
+                    if (message.equals("STEP_FINISHED")) {
                         player.setCurrentState(FINAL);
                         player.send(FINAL);
                     }
