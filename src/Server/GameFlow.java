@@ -133,17 +133,19 @@ public class GameFlow extends Thread {
                     try {
                         player.username = (String) player.receive();
                         System.out.println(player.username);
+                        if (message.equals("STEP_FINISHED")) {
+                            if (player.turnToChoose) {
+                                player.setCurrentState(CHOOSE_CATEGORY);
+                                player.send(CHOOSE_CATEGORY);
+                            } else {
+                                player.setCurrentState(WAITING);
+                                player.send(WAITING);
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }}
-                    if (message.equals("STEP_FINISHED")) {
-                        if (player.turnToChoose) {
-                            player.setCurrentState(CHOOSE_CATEGORY);
-                            player.send(CHOOSE_CATEGORY);
-                        } else {
-                            player.setCurrentState(WAITING);
-                        }
-                    }
+
                     break;
                 case CHOOSE_CATEGORY:
                     if (player.themeChoice==null){
@@ -161,8 +163,9 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case QUIZZING:
-                    if ("STEP_FINISHED".equals(message) || message.equals(WAITING)) {
+                    if ("STEP_FINISHED".equals(message) || message.equals(QUIZZING)) {
                         try {
+                            System.out.println("skickar till spelare: "+ player.username);
                             player.send(questions);
                             //vart kommer denna ifrån? det är en extra
                             //STEP_FINISHED istället för score
@@ -180,9 +183,10 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case WAITING:
-                    System.out.println(player1.hasPlayedRound);
+                    if (player.opponent.getCurrentState() == WAITING) {
+                            player.opponent.send(WAITING);
+                        }
                     if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
-                        System.out.println(player+" kommer hit");
                         player.setCurrentState(QUIZZING);
                         player.send(QUIZZING);
                     }
@@ -196,8 +200,8 @@ public class GameFlow extends Thread {
                         //måste flippa turn to choose boolean här
                     }
                     else {
-                        player.setCurrentState(WAITING);
-                        player.send(WAITING);
+                        //player.setCurrentState(WAITING);
+                        //player.send(null);
                     }
                     break;
                 case SHOW_SCORE_THIS_ROUND:

@@ -50,10 +50,13 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpFrame();
         while (true){
             try {
+                System.out.println("står och lyssnar");
                 fromServer = client.receive();
-                currentState = (int) fromServer;
-                System.out.println("Nuvarande status: "+currentState);
-                handleState();
+                if (fromServer != null) {
+                    currentState = (int) fromServer;
+                    System.out.println("Nuvarande status: "+currentState);
+                    handleState();
+                }
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -128,12 +131,7 @@ public class GamePanel extends JFrame implements ActionListener {
             case WAITING:
                 //client.send(currentState);
                 waitingForOtherPlayerPanel();
-                try {
-                    client.send(WAITING);
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                client.send("STEP_FINISHED");
                 //client.send("STEP_FINISHED"); Ej nödvändigt?
                 break;
             case SHOW_SCORE_THIS_ROUND:
@@ -243,7 +241,13 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void startGamePanel() {
         //client.send(QUIZZING);
-        questionArray = (ArrayList[][]) client.receive();;
+        try {
+            questionArray = (ArrayList[][]) client.receive();
+            System.out.println("har mottagit listan");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
