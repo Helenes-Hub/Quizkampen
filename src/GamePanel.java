@@ -350,6 +350,7 @@ public class GamePanel extends JFrame implements ActionListener {
             client.send(score);
             currentState=WAITING;
             client.send(WAITING);
+            waitingForOtherPlayerPanel();
         }
     }
 

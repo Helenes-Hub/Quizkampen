@@ -145,9 +145,7 @@ public class GameFlow extends Thread {
                 System.out.println("skickar 2 till kategori");
                 player2.send(CHOOSE_CATEGORY);
                 player2.setTurnToChoose(false);}
-            else{
-                player.send(WAITING);
-            }
+
 
         }else if (currentState == CHOOSE_CATEGORY){
 
@@ -166,12 +164,12 @@ public class GameFlow extends Thread {
             try {
                 player.pointsThisRound = (int) player.receive();
                 System.out.println(player.pointsThisRound);
-                return;
+                player.setHasPlayedRound(true);
+                counterOfRounds++;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            player.setHasPlayedRound(true);
-            counterOfRounds++;
+
 
         }else if (currentState == SHOW_SCORE_THIS_ROUND){
             player1.send(SHOW_SCORE_THIS_ROUND);
