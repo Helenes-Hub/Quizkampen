@@ -50,8 +50,8 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpFrame();
         while (true){
             try {
-                System.out.println("står och lyssnar");
                 fromServer = client.receive();
+                System.out.println("står och lyssnar");
                 if (fromServer != null) {
                     currentState = (int) fromServer;
                     System.out.println("Nuvarande status: "+currentState);
@@ -369,6 +369,9 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
         buttonD.setText(options.get(3));
+
+        //timer räknar ner till 0
+        //om 0 status== checkanswer(null)
     }
 
     private void finalScorePanel() {

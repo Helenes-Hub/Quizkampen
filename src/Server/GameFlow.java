@@ -115,7 +115,7 @@ public class GameFlow extends Thread {
         //player.send(INITIAL);
 
         synchronized (this) {
-            if (player1.getHasPlayedRound()==true && player2.getHasPlayedRound()==true) {
+            if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
             }
