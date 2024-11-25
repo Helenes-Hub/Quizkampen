@@ -65,7 +65,7 @@ public class GameFlow extends Thread {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
             player1.send(INITIAL);
-            player1.setTurnToChoose(true);
+            player1.setTurnToChoose(true); //Spelare1s tur
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
                 System.out.println("tråd 1 aktiv");
 
@@ -133,7 +133,7 @@ public class GameFlow extends Thread {
                         player.username = (String) player.receive();
                         System.out.println(player.username);
                         if (message.equals("STEP_FINISHED")) {
-                            if (player.turnToChoose) {
+                            if (player.turnToChoose) {  //om man får välja skickas man vidare här
                                 player.setCurrentState(CHOOSE_CATEGORY);
                                 player.send(CHOOSE_CATEGORY);
                             } else {
@@ -149,11 +149,11 @@ public class GameFlow extends Thread {
                 case CHOOSE_CATEGORY:
                     if (player.themeChoice==null){
                     try {
-                        currentPlayer=player;
+                        currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
                         player.themeChoice = (String) player.receive();
                         System.out.println(player.themeChoice);
-                        player.turnToChoose = false;
-                        player.getOpponent().turnToChoose = true;
+                        player.turnToChoose = false;    //När man fått välja ändras boolean till false
+                        player.getOpponent().turnToChoose = true;   //Och motståndarens ändras till true. Motståndare får välja nästa gång.
                         questions=getQuestions();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -171,8 +171,9 @@ public class GameFlow extends Thread {
                             //vart kommer denna ifrån? det är en extra
                             //STEP_FINISHED istället för score
                             System.out.println(player.receive().toString());
-                            player.pointsThisRound = (int) player.receive();
-                            player.setHasPlayedRound(true);
+                            player.pointsThisRound = (int) player.receive(); //Sparar rundans poäng
+                            player.addPointsThisRound(counterOfRounds, player.pointsThisRound); //Sparar poäng till rundnumret - 1. En array där poängen sparar per runda
+                            player.setHasPlayedRound(true); //När spelaren spelat en runda så sätts denna till true
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
 
@@ -198,7 +199,8 @@ public class GameFlow extends Thread {
                     } else if (roundOver) {
                         player.setCurrentState(SHOW_SCORE_THIS_ROUND);
                         player.send(SHOW_SCORE_THIS_ROUND);
-                        //måste flippa turn to choose boolean här
+                        currentPlayer.getOpponent().turnToChoose = true;    //Här ändras så "currentPlayer"s motståndare får välja kategori
+                        // nästa gång. Första rundan är currentPlayer spelare 1, så nästa runda får spelare 2 välja kategori.
                     }
                     else {
                         //player.setCurrentState(WAITING);
@@ -206,7 +208,7 @@ public class GameFlow extends Thread {
                     }
                     break;
                 case SHOW_SCORE_THIS_ROUND:
-                    if (message.equals("STEP_FINISHED")&& rounds>=counterOfRounds) {
+                    if (message.equals("STEP_FINISHED")&& rounds<=counterOfRounds) {
                         player.setCurrentState(FINAL);
                         player.send(FINAL);
                     }
