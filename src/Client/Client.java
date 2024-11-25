@@ -1,3 +1,5 @@
+package Client;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -18,7 +20,7 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //new GamePanel(this);
+        //new Client.GamePanel(this);
     }
 
     public void send(Object message){

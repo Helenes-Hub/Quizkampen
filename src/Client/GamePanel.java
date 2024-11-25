@@ -1,10 +1,10 @@
+package Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GamePanel extends JFrame implements ActionListener {
@@ -83,8 +83,8 @@ public class GamePanel extends JFrame implements ActionListener {
            }
         }
         if (e.getSource() == category1Button) {
-            client.send(CHOOSE_CATEGORY);
             toServer=category1Button.getText().toUpperCase();
+            client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             client.send(toServer.toString());
             client.send(QUIZZING);
@@ -93,12 +93,12 @@ public class GamePanel extends JFrame implements ActionListener {
             return;
         }
         if (e.getSource() == category2Button) {
-            client.send(CHOOSE_CATEGORY);
             toServer=category2Button.getText().toUpperCase();
+            client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             System.out.println(currentCategory);
             client.send(toServer.toString());
-            client.send(QUIZZING);
+            //client.send(QUIZZING);
             //currentState = QUIZZING;
             //handleState();
             return;
@@ -245,7 +245,7 @@ public class GamePanel extends JFrame implements ActionListener {
         //questions = category.getQuestions();
         currentQuestionIndex = 0;
         score = 0;
-        //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
+        //Server.QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         // list[currentQuestionindex][0]
         //List<String> options = currentQuestion.getOptions();
         //list = {1. fråga- options- rätt svar
@@ -332,7 +332,7 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void checkAnswer(String answer) {
-        //QuestionClass currentQuestion = questions.get(currentQuestionIndex);
+        //Server.QuestionClass currentQuestion = questions.get(currentQuestionIndex);
         String correctAnswer= String.valueOf(questionArray[currentQuestionIndex][2].get(0));
         //System.out.println(correctAnswer);
         if(answer.equals(correctAnswer)) {

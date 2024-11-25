@@ -1,3 +1,5 @@
+package Server;
+
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,69 +104,74 @@ public class GameFlow extends Thread {
 
         player2Thread.start();
     }
-
+    //syncronized
     public void properties(Player player, int currentState) {
 
+
+    synchronized (this) {
         if (player1.hasPlayedRound && player2.hasPlayedRound) {
             player1.setHasPlayedRound(false);
             player2.setHasPlayedRound(false);
         }
 
-        if (currentState == INITIAL){
+        if (currentState == INITIAL) {
             player.send(INITIAL);
             //currentState = (int) player.receive();
             //System.out.println("Här är du " + currentState);
             //return currentState;
 
-        } else if (currentState == ENTER_USERNAME){
+        } else if (currentState == ENTER_USERNAME) {
             player.send(ENTER_USERNAME);
             try {
                 player.username = (String) player.receive();
                 System.out.println(player.username);
+                player.send(WAITING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
 
-            player.send(WAITING);
+        } else if (currentState == WAITING) {
 
-        }else if(currentState == WAITING){
-
-            System.out.println(player.username+ " is Waiting");
+            System.out.println(player.username + " is Waiting");
             //System.out.println("player1 boolean: "+ player1.hasPlayedRound);
-            if (player==player1 && player2.hasPlayedRound){
+            if (player == player1 && player2.hasPlayedRound) {
                 System.out.println("player 1 wait quiz");
                 player.send(QUIZZING);
-            }
-            else if (player==player2 && player1.hasPlayedRound){
+            } else if (player == player2 && player1.hasPlayedRound) {
                 System.out.println("player 2 wait quiz");
                 player.send(QUIZZING);
-            }
-            else if (player==player1 && player.turnToChoose) {
+            } else if (player == player1 && player.turnToChoose) {
                 System.out.println("Skickar 1 till kategori");
                 //player1.setTurnToChoose(false);
                 //player2.setTurnToChoose(true);
                 player1.send(CHOOSE_CATEGORY);
-            }
-            else if (player==player2 && player.turnToChoose){
+            } else if (player == player2 && player.turnToChoose) {
                 System.out.println("skickar 2 till kategori");
                 //player2.setTurnToChoose(false);
                 //player1.setTurnToChoose(true);
                 player2.send(CHOOSE_CATEGORY);
+            } else {
+                player.send(WAITING);
             }
-            else{player.send(WAITING);}
 
 
-        }else if (currentState == CHOOSE_CATEGORY){
+        } else if (currentState == CHOOSE_CATEGORY) {
 
-            this.currentPlayer=player;
-            player.themeChoice = (String) player.receive();
-            System.out.println("mottagit "+ player.themeChoice);
-            questions=getQuestions();
-            player.send(QUIZZING);
+            //this.currentPlayer=player;
+            try {
+                player.themeChoice = (String) player.receive();
+                System.out.println("mottagit " + player.themeChoice);
+                questions = getQuestions();
+                player.send(QUIZZING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             //player.setTurnToChoose(false);
 
-        }else if (currentState == QUIZZING){
+        } else if (currentState == QUIZZING) {
             //player.send(QUIZZING);
             System.out.println("ska skicka frågor");
             player.send(questions);
@@ -180,22 +187,22 @@ public class GameFlow extends Thread {
             }
 
 
-        }else if (currentState == SHOW_SCORE_THIS_ROUND){
+        } else if (currentState == SHOW_SCORE_THIS_ROUND) {
             player1.send(SHOW_SCORE_THIS_ROUND);
             player2.send(SHOW_SCORE_THIS_ROUND);
             player1.send(player1.getPointsThisRound());
             player2.send(player2.getPointsThisRound());
             player1.send(player1.getPointsAllRounds());
             player2.send(player2.getPointsAllRounds());
-        } else if (currentState == FINAL){
+        } else if (currentState == FINAL) {
             player1.send(FINAL);
             player1.send(player1.getTotalScore());
             player2.send(FINAL);
             player2.send(player2.getTotalScore());
-        }
-        else if (currentState==QUIT){
+        } else if (currentState == QUIT) {
             System.exit(0);
         }
+    }
         //return 1;
     }
 
@@ -272,6 +279,9 @@ public class GameFlow extends Thread {
             questionArray[i][0].add(questions.get(i).getQuestion());
             questionArray[i][1].addAll(questions.get(i).getOptions());
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
+            System.out.println(questionArray[i][0].toString());
+            System.out.println(questionArray[i][1].toString());
+            System.out.println(questionArray[i][2].toString());
         }
         return questionArray;
     }
