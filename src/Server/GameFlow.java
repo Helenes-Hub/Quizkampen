@@ -8,6 +8,7 @@ import java.util.Properties;
 
 public class GameFlow extends Thread {
 
+
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
     private final int CHOOSE_CATEGORY = 2;
@@ -15,10 +16,11 @@ public class GameFlow extends Thread {
     private final int WAITING = 4;
     private final int SHOW_SCORE_THIS_ROUND = 5;
     private final int FINAL = 6;
-    private final int WAITING_FOR_SCORE =7;
-    private final int QUIT=8;
-    private int currentStateP1 = 0;
+    private final int WAITING_FOR_SCORE = 7;
+    private final int QUIT = 8;
+    /*private int currentStateP1 = 0;
     private int currentStateP2 = 0;
+     */
 
     private int timer;
     private int questionsPerRound;
@@ -28,7 +30,7 @@ public class GameFlow extends Thread {
     private Player player2;
     private Player currentPlayer;
     private Object questions;
-    private Boolean roundOver=false;
+    private Boolean roundOver = false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -42,7 +44,7 @@ public class GameFlow extends Thread {
         //loading properties
         Properties p = new Properties();
         try {
-            p.load(new FileInputStream("src/Settings.properties"));
+            p.load(new FileInputStream("src/Server/Settings.properties"));
         } catch (Exception e) {
             System.out.println("filen hittades inte");
         }
@@ -59,20 +61,22 @@ public class GameFlow extends Thread {
 
     }
 
-    public void runPlayer1(){
-        Thread player1Thread=new Thread(() -> {
-            properties(player1, currentStateP1);
+    public void runPlayer1() {
+        Thread player1Thread = new Thread(() -> {
+            Object message = null;
+            properties(player1, message);
             player1.setTurnToChoose(true);
-            while (currentStateP1 != QUIT || currentStateP2 != QUIT) {
+            while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
                 System.out.println("tråd 1 aktiv");
 
                 try {
-                    currentStateP1 = (int) player1.receive();
-                    System.out.println("har mottagit 1 state: " + currentStateP1);
+                    message = player1.receive();
+                    properties(player1, message);
+                    System.out.println("har mottagit 1 state: " + message);
 
-                    properties(player1, currentStateP1);
+                    properties(player1, message);
 
-                    System.out.println("har uppdaterat 1 state: " + currentStateP1);
+                    System.out.println("har uppdaterat 1 state: " + player1.getCurrentState());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -82,20 +86,21 @@ public class GameFlow extends Thread {
         player1Thread.start();
     }
 
-    public void runPlayer2(){
-        Thread player2Thread=new Thread(() -> {
-
-            properties(player2, currentStateP2);
-            while (currentStateP2 != QUIT || currentStateP1 != QUIT) {
+    public void runPlayer2() {
+        Thread player2Thread = new Thread(() -> {
+            Object message = null;
+            properties(player2, message);
+            while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
                 System.out.println("tråd 2 aktiv");
 
                 try {
-                    currentStateP2 = (int) player2.receive();
-                    System.out.println("har mottagit 2 state: " + currentStateP2);
+                    message = player2.receive();
+                    properties(player2, message);
+                    System.out.println("har mottagit 2 state: " + message);
 
-                    properties(player2, currentStateP2);
+                    properties(player2, message);
 
-                    System.out.println("har uppdaterat 2 state: " + currentStateP2);
+                    System.out.println("har uppdaterat 2 state: " + player2.getCurrentState());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -105,22 +110,82 @@ public class GameFlow extends Thread {
         player2Thread.start();
     }
     //syncronized
-    public void properties(Player player, int currentState) {
 
+    public void properties(Player player, Object message) {
+        player.send(INITIAL);
 
-    synchronized (this) {
-        if (player1.hasPlayedRound && player2.hasPlayedRound) {
-            player1.setHasPlayedRound(false);
-            player2.setHasPlayedRound(false);
+        synchronized (this) {
+            if (player1.hasPlayedRound && player2.hasPlayedRound) {
+                player1.setHasPlayedRound(false);
+                player2.setHasPlayedRound(false);
+            }
+
+            switch (player.getCurrentState()) {
+                case INITIAL:
+                    if (message == "STEP_FINISHED") {
+                        player.setCurrentState(ENTER_USERNAME);
+                        System.out.println(player.username);
+                        player.send(ENTER_USERNAME);
+                    }
+                    break;
+                case ENTER_USERNAME:
+                    try {
+                        player.username = (String) player.receive();
+                        System.out.println(player.username);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (message == "STEP_FINISHED") {
+                        if (player.turnToChoose) {
+                            player.setCurrentState(CHOOSE_CATEGORY);
+                            player.send(CHOOSE_CATEGORY);
+                        } else {
+                            player.setCurrentState(WAITING);
+                        }
+                    }
+                    break;
+                case CHOOSE_CATEGORY:
+                    if (message == "STEP_FINISHED") {
+                        player.setCurrentState(QUIZZING);
+                        player.send(QUIZZING);
+                    }
+                    break;
+                case QUIZZING:
+                    if (message == "STEP_FINISHED") {
+                        player.turnToChoose = false;
+                        player.hasPlayedRound = true;
+                        player.setCurrentState(WAITING);
+                        player.send(WAITING);
+                    }
+                    break;
+                case WAITING:
+                    if (player.getOpponent().hasPlayedRound && message == "STEP_FINISHED") {
+                        player.setCurrentState(QUIZZING);
+                        player.send(QUIZZING);
+
+                    } else {
+                        player.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                        player.send(SHOW_SCORE_THIS_ROUND);
+                    }
+                    break;
+                case SHOW_SCORE_THIS_ROUND:
+                    if (message == "STEP_FINISHED") {
+                        player.setCurrentState(FINAL);
+                        player.send(FINAL);
+                    }
+            }
         }
+    }
 
-        if (currentState == INITIAL) {
+        /*
+        if (player.getCurrentState() == INITIAL) {
             player.send(INITIAL);
+            player.setCurrentState(ENTER_USERNAME);
             //currentState = (int) player.receive();
             //System.out.println("Här är du " + currentState);
             //return currentState;
 
-        } else if (currentState == ENTER_USERNAME) {
+        } else if (player.getCurrentState() == ENTER_USERNAME) {
             player.send(ENTER_USERNAME);
             try {
                 player.username = (String) player.receive();
@@ -131,7 +196,7 @@ public class GameFlow extends Thread {
             }
 
 
-        } else if (currentState == WAITING) {
+        } else if (player.getCurrentState() == WAITING) {
 
             System.out.println(player.username + " is Waiting");
             //System.out.println("player1 boolean: "+ player1.hasPlayedRound);
@@ -156,14 +221,13 @@ public class GameFlow extends Thread {
             }
 
 
-        } else if (currentState == CHOOSE_CATEGORY) {
+        } else if (player.getCurrentState() == CHOOSE_CATEGORY) {
 
-            //this.currentPlayer=player;
+            this.currentPlayer=player;
             try {
                 player.themeChoice = (String) player.receive();
                 System.out.println("mottagit " + player.themeChoice);
                 questions = getQuestions();
-                player.send(QUIZZING);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -171,8 +235,8 @@ public class GameFlow extends Thread {
 
             //player.setTurnToChoose(false);
 
-        } else if (currentState == QUIZZING) {
-            //player.send(QUIZZING);
+        } else if (player.getCurrentState() == QUIZZING) {
+            player.send(QUIZZING);
             System.out.println("ska skicka frågor");
             player.send(questions);
 
@@ -187,25 +251,25 @@ public class GameFlow extends Thread {
             }
 
 
-        } else if (currentState == SHOW_SCORE_THIS_ROUND) {
+        } else if (player.getCurrentState() == SHOW_SCORE_THIS_ROUND) {
             player1.send(SHOW_SCORE_THIS_ROUND);
             player2.send(SHOW_SCORE_THIS_ROUND);
             player1.send(player1.getPointsThisRound());
             player2.send(player2.getPointsThisRound());
             player1.send(player1.getPointsAllRounds());
             player2.send(player2.getPointsAllRounds());
-        } else if (currentState == FINAL) {
+        } else if (player.getCurrentState() == FINAL) {
             player1.send(FINAL);
             player1.send(player1.getTotalScore());
             player2.send(FINAL);
             player2.send(player2.getTotalScore());
-        } else if (currentState == QUIT) {
+        } else if (player.getCurrentState() == QUIT) {
             System.exit(0);
         }
     }
         //return 1;
     }
-
+         */
 
 
     /*
@@ -269,7 +333,7 @@ public class GameFlow extends Thread {
         Collections.shuffle(allThemedQuestions);
         List<QuestionClass> questions = allThemedQuestions.subList(0, this.questionsPerRound);
 
-        ArrayList[][] questionArray= new ArrayList[this.questionsPerRound][3];
+        ArrayList[][] questionArray = new ArrayList[this.questionsPerRound][3];
         for (int i = 0; i < this.questionsPerRound; i++) {
             for (int j = 0; j < 3; j++) {
                 questionArray[i][j] = new ArrayList<>();
