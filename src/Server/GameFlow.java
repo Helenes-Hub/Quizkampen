@@ -121,6 +121,8 @@ public class GameFlow extends Thread {
                 currentPlayer.themeChoice=null;
                 currentPlayer.turnToChoose=false;
                 currentPlayer.opponent.turnToChoose=true;
+                counterOfRounds++;
+                roundOver=true;
             }
         }
         System.out.println(player.username+" processing "+message+ " with current status: "+player.getCurrentState());
@@ -166,6 +168,7 @@ public class GameFlow extends Thread {
                         currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
 
                         try {
+                            roundOver=false;
                             player.themeChoice = (String) player.receive();
                             System.out.println("spelarval: "+player.themeChoice);
                             System.out.println(player.themeChoice);
@@ -228,17 +231,17 @@ public class GameFlow extends Thread {
                     player.send(QUIZZING);
                     break;
                 }
+                else if (roundOver) {
+                    player.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                    player.send(SHOW_SCORE_THIS_ROUND);
+                    player.opponent.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                    player.opponent.send(SHOW_SCORE_THIS_ROUND);
+                    break;
+                }
                 else if (player.turnToChoose && (!player.hasPlayedRound)) {
                     player.setCurrentState(CHOOSE_CATEGORY);
                     player.send(CHOOSE_CATEGORY);
                     break;
-
-                } else if (roundOver) {
-                    player.setCurrentState(SHOW_SCORE_THIS_ROUND);
-                    player.send(SHOW_SCORE_THIS_ROUND);
-                    currentPlayer.getOpponent().turnToChoose = true;
-                    break;//Här ändras så "currentPlayer"s motståndare får välja kategori
-                    // nästa gång. Första rundan är currentPlayer spelare 1, så nästa runda får spelare 2 välja kategori.
                 }
                  else if (player.opponent.getCurrentState() == WAITING) {
                         System.out.println("sending to opponent wait");
@@ -425,7 +428,9 @@ public class GameFlow extends Thread {
         }
         for (int i = 0; i < this.questionsPerRound; i++) {
             questionArray[i][0].add(questions.get(i).getQuestion());
-            questionArray[i][1].addAll(questions.get(i).getOptions());
+            List<String> shuffledOptions = new ArrayList<>(questions.get(i).getOptions());
+            Collections.shuffle(shuffledOptions);
+            questionArray[i][1].addAll(shuffledOptions);
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
         }
         return questionArray;
