@@ -42,11 +42,13 @@ public class GamePanel extends JFrame implements ActionListener {
     private String currentCategory;
     private int currentQuestionIndex;
     private int score;
+    private int totalScore;
+    private int totalQuestions;
     private ArrayList[][] questionArray;
     private Object fromServer;
     private Object toServer;
     private String correctAnswer;
-    private Boolean busy=false;
+
 
     Client  client = new Client();
 
@@ -303,7 +305,8 @@ public class GamePanel extends JFrame implements ActionListener {
                 nextQuestion();
             } else {
                 System.out.println("skickar poäng till server: " + score);
-                //currentState=WAITING;
+                totalScore+=score;
+                totalQuestions+=3;
                 try {
                     client.send(score);
 
@@ -393,7 +396,7 @@ public class GamePanel extends JFrame implements ActionListener {
         quitButton.setBounds(250, 470, 200, 100);
 
         JLabel scoreField = new JLabel();
-        setUpLabel(scoreField, 200, 300, 300, 100, "Score: " + score + "/" + questionArray[0].length);
+        setUpLabel(scoreField, 200, 300, 300, 100, "Score: " + totalScore + "/" + totalQuestions);
 
     }
 
