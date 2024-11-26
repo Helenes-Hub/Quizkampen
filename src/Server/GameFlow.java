@@ -71,7 +71,7 @@ public class GameFlow extends Thread {
 
                 try {
                     message = player1.receive();
-                    properties(player1, message);
+                    //properties(player1, message);
                     System.out.println("har mottagit 1 state: " + message);
 
                     properties(player1, message);
@@ -95,8 +95,8 @@ public class GameFlow extends Thread {
 
                 try {
                     message = player2.receive();
-                    properties(player2, message);
-                    System.out.println("har mottagit 2 state: " + message);
+                    //properties(player2, message);
+                    System.out.println("har mottagit 2 state: " + message + " med nuvarande status: "+ player2.getCurrentState());
 
                     properties(player2, message);
 
@@ -118,102 +118,146 @@ public class GameFlow extends Thread {
             if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
+                currentPlayer.themeChoice=null;
+                currentPlayer.turnToChoose=false;
+                currentPlayer.opponent.turnToChoose=true;
             }
+        }
+        System.out.println(player.username+" processing "+message+ " with current status: "+player.getCurrentState());
+        switch (player.getCurrentState()) {
 
-            switch (player.getCurrentState()) {
-                case INITIAL:
-                    if (message.equals("STEP_FINISHED")) {
-                        player.setCurrentState(ENTER_USERNAME);
-                        System.out.println(player.username);
-                        player.send(ENTER_USERNAME);
-                    }
-                    break;
-                case ENTER_USERNAME:
-                    if (player.username==null){
+            case INITIAL:
+                //System.out.println("player sent in initial");
+                if (message.equals("STEP_FINISHED")) {
+                    //System.out.println("player sent in step");
+                    player.setCurrentState(ENTER_USERNAME);
+                    //System.out.println(player.username);
+                    player.send(ENTER_USERNAME);
+                }
+                break;
+            case ENTER_USERNAME:
+                if (player.username==null){
                     try {
-                        player.username = (String) player.receive();
-                        System.out.println(player.username);
+                        System.out.println("inväntar namn");
+                        try {
+                            player.username = (String) player.receive();
+                            player.setCurrentState(WAITING);
+                            player.send(WAITING);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        //System.out.println("användarnamn: "+player.username);
                         if (message.equals("STEP_FINISHED")) {
-                            if (player.turnToChoose) {
-                                player.setCurrentState(CHOOSE_CATEGORY);
-                                player.send(CHOOSE_CATEGORY);
-                            } else {
-                                player.setCurrentState(WAITING);
-                                player.send(WAITING);
-                            }
+                           // if (player.turnToChoose) {  //om man får välja skickas man vidare här
+                            //    player.setCurrentState(CHOOSE_CATEGORY);
+                            //    player.send(CHOOSE_CATEGORY);
+                            //} else {
+
+                           // }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }}
 
-                    break;
-                case CHOOSE_CATEGORY:
-                    if (player.themeChoice==null){
+                break;
+            case CHOOSE_CATEGORY:
+                if (player.themeChoice==null){
                     try {
-                        currentPlayer=player;
-                        player.themeChoice = (String) player.receive();
-                        System.out.println(player.themeChoice);
-                        questions=getQuestions();
+                        currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
+
+                        try {
+                            player.themeChoice = (String) player.receive();
+                            System.out.println("spelarval: "+player.themeChoice);
+                            System.out.println(player.themeChoice);
+                            questions=getQuestions();
+                            player.setCurrentState(QUIZZING);
+                            player.send(QUIZZING);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        //player.turnToChoose = false;    //När man fått välja ändras boolean till false
+                        //player.getOpponent().turnToChoose = true;   //Och motståndarens ändras till true. Motståndare får välja nästa gång.
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }}
-                    if (message.equals("STEP_FINISHED")) {
-                        player.setCurrentState(QUIZZING);
-                        player.send(QUIZZING);
-                    }
-                    break;
-                case QUIZZING:
-                    if ("STEP_FINISHED".equals(message) || message.equals(QUIZZING)) {
+                break;
+            case QUIZZING:
+                if ("STEP_FINISHED".equals(message) || message.equals(QUIZZING)) {
+                    try {
+                        System.out.println("skickar lista till spelare: "+ player.username);
+                        player.send(questions);
+                        //vart kommer denna ifrån? det är en extra
+                        //STEP_FINISHED istället för score
+                        //System.out.println("onödig STEP_FINISHED: "+player.receive().toString());
+                        System.out.println("inväntar poäng från "+player.username);
                         try {
-                            System.out.println("skickar till spelare: "+ player.username);
-                            player.send(questions);
-                            //vart kommer denna ifrån? det är en extra
-                            //STEP_FINISHED istället för score
-                            System.out.println(player.receive().toString());
                             player.pointsThisRound = (int) player.receive();
                             player.setHasPlayedRound(true);
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        //player.turnToChoose = false;
-                        //Ta emot in poäng
-                    }
-                    break;
-                case WAITING:
-                    if (player.opponent.getCurrentState() == WAITING) {
-                            player.opponent.send(WAITING);
-                        }
-                    if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
-                        player.setCurrentState(QUIZZING);
-                        player.send(QUIZZING);
-                    }
-                    else if (player.turnToChoose && (!player.hasPlayedRound)) {
-                        player.setCurrentState(CHOOSE_CATEGORY);
-                        player.send(CHOOSE_CATEGORY);
 
-                    } else if (roundOver) {
-                        player.setCurrentState(SHOW_SCORE_THIS_ROUND);
-                        player.send(SHOW_SCORE_THIS_ROUND);
-                        //måste flippa turn to choose boolean här
+                        //System.out.println(player.receive().toString());
+                        //player.pointsThisRound = (int) player.receive(); //Sparar rundans poäng
+                        //player.addPointsThisRound(counterOfRounds, player.pointsThisRound); //Sparar poäng till rundnumret - 1. En array där poängen sparar per runda
+                        //player.setHasPlayedRound(true); //När spelaren spelat en runda så sätts denna till true
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    else {
-                        //player.setCurrentState(WAITING);
-                        //player.send(null);
-                    }
+                    //player.turnToChoose = false;
+                    //Ta emot in poäng
+                }
+                break;
+            case WAITING:
+                System.out.println("current player: "+player.username);
+                System.out.println("player 1 is: "+player1.getCurrentState());
+                System.out.println("player 2 is: "+player2.getCurrentState());
+                System.out.println("player 1 hasplayed: "+player1.getHasPlayedRound());
+                System.out.println("player 2 hasplayed: "+player2.getHasPlayedRound());
+                System.out.println("player 1 boolean turnToChoose: "+ player1.getTurnToChoose());
+                System.out.println("player 2 boolean turntochoose: "+ player2.getTurnToChoose());
+                synchronized (this) {
+
+                if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
+                    player.setCurrentState(QUIZZING);
+                    player.send(QUIZZING);
                     break;
-                case SHOW_SCORE_THIS_ROUND:
-                    if (message.equals("STEP_FINISHED")&& rounds>=counterOfRounds) {
-                        player.setCurrentState(FINAL);
-                        player.send(FINAL);
+                }
+                else if (player.turnToChoose && (!player.hasPlayedRound)) {
+                    player.setCurrentState(CHOOSE_CATEGORY);
+                    player.send(CHOOSE_CATEGORY);
+                    break;
+
+                } else if (roundOver) {
+                    player.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                    player.send(SHOW_SCORE_THIS_ROUND);
+                    currentPlayer.getOpponent().turnToChoose = true;
+                    break;//Här ändras så "currentPlayer"s motståndare får välja kategori
+                    // nästa gång. Första rundan är currentPlayer spelare 1, så nästa runda får spelare 2 välja kategori.
+                }
+                 else if (player.opponent.getCurrentState() == WAITING) {
+                        System.out.println("sending to opponent wait");
+                        player.opponent.send(WAITING);
+                        break;
                     }
-                    else{
-                        player.setCurrentState(WAITING);
-                        player.send(WAITING);
-                    }
-            }
+                else {
+                    System.out.println("inga kriterium uppnåddes");
+                }
+                break;}
+            case SHOW_SCORE_THIS_ROUND:
+                if (message.equals("STEP_FINISHED")&& rounds<=counterOfRounds) {
+                    player.setCurrentState(FINAL);
+                    player.send(FINAL);
+                }
+                else{
+                    player.setCurrentState(WAITING);
+                    player.send(WAITING);
+                }
         }
     }
 
@@ -383,9 +427,6 @@ public class GameFlow extends Thread {
             questionArray[i][0].add(questions.get(i).getQuestion());
             questionArray[i][1].addAll(questions.get(i).getOptions());
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
-            System.out.println(questionArray[i][0].toString());
-            System.out.println(questionArray[i][1].toString());
-            System.out.println(questionArray[i][2].toString());
         }
         return questionArray;
     }

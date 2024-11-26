@@ -25,6 +25,7 @@ public class Client {
 
     public void send(Object message){
         try {
+            System.out.println("skickar till server: "+ message.toString());
             out.writeObject(message);
             out.flush();
         } catch (IOException e) {
@@ -34,11 +35,11 @@ public class Client {
 
     public Object receive()  {
         try {
-            return in.readObject();
-        } catch (IOException e) {
+            Object message = in.readObject();
+            System.out.println("tar emot från server: "+ message.toString());
+            return message;
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

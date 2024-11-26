@@ -58,7 +58,9 @@ public class Player {
 
     public void send(Object message) {
         try {
+            System.out.println("skickar till client: "+ message.toString());
             out.writeObject(message);
+            out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +68,9 @@ public class Player {
 
     public Object receive() {
         try {
-            return in.readObject();
+            Object message = in.readObject();
+            System.out.println("tar emot från client: "+this.username+" "+ message.toString());
+            return message;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
