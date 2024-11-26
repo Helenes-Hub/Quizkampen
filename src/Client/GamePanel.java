@@ -43,6 +43,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private int currentQuestionIndex;
     private int score;
     private int totalScore;
+    private int questionsPerRound;
     private int totalQuestions;
     private ArrayList[][] questionArray;
     private Object fromServer;
@@ -58,6 +59,7 @@ public class GamePanel extends JFrame implements ActionListener {
         setupActionlisteners();
         try {
          timeFromServer=(int)client.receive();
+         questionsPerRound=(int)client.receive();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -306,7 +308,7 @@ public class GamePanel extends JFrame implements ActionListener {
             } else {
                 System.out.println("skickar poäng till server: " + score);
                 totalScore+=score;
-                totalQuestions+=3;
+                totalQuestions+=questionsPerRound;
                 try {
                     client.send(score);
 

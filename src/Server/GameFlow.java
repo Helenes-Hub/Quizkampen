@@ -65,6 +65,7 @@ public class GameFlow extends Thread {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
             player1.send(timer);
+            player1.send(questionsPerRound);
             player1.send(INITIAL);
             player1.setTurnToChoose(true);
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
@@ -91,6 +92,7 @@ public class GameFlow extends Thread {
         Thread player2Thread = new Thread(() -> {
             Object message = null;
             player2.send(timer);
+            player2.send(questionsPerRound);
             player2.send(INITIAL);
             while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
                 System.out.println("tråd 2 aktiv");
