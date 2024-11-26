@@ -164,6 +164,6 @@ public class Player {
             if(socket != null) {socket.close();}
         } catch (IOException e) {
             e.printStackTrace();
-        } //Var ska denna anropas??
+        }
     }
 }

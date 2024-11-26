@@ -68,13 +68,18 @@ public class GameFlow extends Thread {
             player1.send(questionsPerRound);
             player1.send(INITIAL);
             player1.setTurnToChoose(true);
-            while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
+            while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) { //Kan sättas till true bara?
                 System.out.println("tråd 1 aktiv");
 
                 try {
                     message = player1.receive();
                     //properties(player1, message);
                     System.out.println("har mottagit 1 state: " + message);
+                    if (message.equals("QUIT")){
+                        player1.close();
+                        player2.close();
+                        System.exit(0);
+                    }
 
                     properties(player1, message);
 
@@ -94,13 +99,19 @@ public class GameFlow extends Thread {
             player2.send(timer);
             player2.send(questionsPerRound);
             player2.send(INITIAL);
-            while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
+            while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT){ //Kan sättas till true bara?
                 System.out.println("tråd 2 aktiv");
 
                 try {
                     message = player2.receive();
                     //properties(player2, message);
                     System.out.println("har mottagit 2 state: " + message + " med nuvarande status: "+ player2.getCurrentState());
+
+                    if (message.equals("QUIT")){
+                        player1.close();
+                        player2.close();
+                        System.exit(0);
+                    }
 
                     properties(player2, message);
 
