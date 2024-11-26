@@ -46,7 +46,7 @@ public enum ClassMaker {
                               Arrays.asList("Merkurius", "Venus", "Mars", "Jorden"), "Venus"),
             new QuestionClass("Vad är huvudkomponenten i solens energi?",
                               Arrays.asList("Fusionsreaktioner", "Kärnklyvning", "Kemiska reaktioner", "Gravitationskraft"), "Fusionsreaktioner"),
-            new QuestionClass("Vad är det vetenskapliga namnet för människans överarmsben?",
+            new QuestionClass("Vad är det latinska namnet för överarmsben?",
                               Arrays.asList("Femur", "Humerus", "Tibia", "Radius"), "Humerus")
     ));
 

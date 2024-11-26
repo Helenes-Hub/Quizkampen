@@ -64,6 +64,7 @@ public class GameFlow extends Thread {
     public void runPlayer1() {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
+            player1.send(timer);
             player1.send(INITIAL);
             player1.setTurnToChoose(true);
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
@@ -89,6 +90,7 @@ public class GameFlow extends Thread {
     public void runPlayer2() {
         Thread player2Thread = new Thread(() -> {
             Object message = null;
+            player2.send(timer);
             player2.send(INITIAL);
             while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
                 System.out.println("tråd 2 aktiv");
@@ -168,7 +170,6 @@ public class GameFlow extends Thread {
                         currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
 
                         try {
-                            roundOver=false;
                             player.themeChoice = (String) player.receive();
                             System.out.println("spelarval: "+player.themeChoice);
                             System.out.println(player.themeChoice);
@@ -236,6 +237,7 @@ public class GameFlow extends Thread {
                     player.send(SHOW_SCORE_THIS_ROUND);
                     player.opponent.setCurrentState(SHOW_SCORE_THIS_ROUND);
                     player.opponent.send(SHOW_SCORE_THIS_ROUND);
+                    roundOver=false;
                     break;
                 }
                 else if (player.turnToChoose && (!player.hasPlayedRound)) {

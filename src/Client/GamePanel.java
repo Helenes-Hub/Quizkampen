@@ -32,6 +32,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonB = new JButton();
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
+    private JButton readyButton=new JButton();
     private Timer questionTimer;
     private JProgressBar timerBar;
     private int timeLeft;
@@ -52,6 +53,12 @@ public class GamePanel extends JFrame implements ActionListener {
 
     public GamePanel() {
         setUpFrame();
+        setupActionlisteners();
+        try {
+         timeFromServer=(int)client.receive();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         while (true) {
             try {
                 fromServer = client.receive();
@@ -114,6 +121,9 @@ public class GamePanel extends JFrame implements ActionListener {
             JButton clickedButton = (JButton) e.getSource();
             questionTimer.stop();
             displayAnswer(clickedButton, correctAnswer);
+        }
+        if (e.getSource() == readyButton){
+            client.send("STEP_FINISHED");
         }
     }
 
@@ -191,10 +201,10 @@ public class GamePanel extends JFrame implements ActionListener {
         add(title);
         title.setText("Select a category");
         title.setFont(new Font("Impact", Font.BOLD, 40));
-        for (JButton button : new JButton[]{category1Button,category2Button}) {
+        /*for (JButton button : new JButton[]{category1Button,category2Button}) {
             for (ActionListener al : button.getActionListeners()) {
                 button.removeActionListener(al);
-            }}
+            }}*/
 
         setUpButton(category1Button, 100, 300, 200, 100, "Animals");
         setUpButton(category2Button, 400, 300, 200, 100, "Science");
@@ -224,10 +234,10 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setBounds(150, 50, 400, 100);
         title.setText("Question " + (currentQuestionIndex + 1));
         title.setFont(new Font("Impact", Font.BOLD, 70));
-        for (JButton button : new JButton[]{buttonA, buttonB, buttonC, buttonD}) {
+        /*for (JButton button : new JButton[]{buttonA, buttonB, buttonC, buttonD}) {
             for (ActionListener al : button.getActionListeners()) {
                 button.removeActionListener(al);
-            }}
+            }}*/
 
         setUpLabel(question, 50, 200, 600, 100, "");
         setUpButton(buttonA, 45, 350, 300, 100, "");
@@ -270,7 +280,9 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void roundFinishedPanel() {
+
         clearPanel();
+        setUpButton(readyButton,250,400,200,100,"Continue");
         JLabel scoreLabel = new JLabel();
         setUpLabel(scoreLabel, 150, 50, 400, 350, "Score this round: " + score);
     }
@@ -402,7 +414,7 @@ public class GamePanel extends JFrame implements ActionListener {
         button.setBackground(new Color(211, 211, 211));
         button.setFont(new Font("Impact", Font.BOLD, 30));
         button.setFocusable(false);
-        button.addActionListener(this);
+        //button.addActionListener(this);
         button.setText(text);
     }
 
@@ -434,6 +446,19 @@ public class GamePanel extends JFrame implements ActionListener {
         getContentPane().removeAll();
         revalidate();
         repaint();
+    }
+
+    private void setupActionlisteners(){
+        buttonA.addActionListener(this);
+        buttonB.addActionListener(this);
+        buttonC.addActionListener(this);
+        buttonD.addActionListener(this);
+        category1Button.addActionListener(this);
+        category2Button.addActionListener(this);
+        playButton.addActionListener(this);
+        quitButton.addActionListener(this);
+        enterNameButton.addActionListener(this);
+        readyButton.addActionListener(this);
     }
 
 
