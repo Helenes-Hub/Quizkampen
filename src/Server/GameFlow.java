@@ -65,13 +65,13 @@ public class GameFlow extends Thread {
         Thread player1Thread = new Thread(() -> {
             Object message = null;
             player1.send(INITIAL);
-            player1.setTurnToChoose(true); //Spelare1s tur
+            player1.setTurnToChoose(true);
             while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
                 System.out.println("tråd 1 aktiv");
 
                 try {
                     message = player1.receive();
-                    properties(player1, message);
+                    //properties(player1, message);
                     System.out.println("har mottagit 1 state: " + message);
 
                     properties(player1, message);
@@ -95,8 +95,8 @@ public class GameFlow extends Thread {
 
                 try {
                     message = player2.receive();
-                    properties(player2, message);
-                    System.out.println("har mottagit 2 state: " + message);
+                    //properties(player2, message);
+                    System.out.println("har mottagit 2 state: " + message + " med nuvarande status: "+ player2.getCurrentState());
 
                     properties(player2, message);
 
@@ -119,19 +119,29 @@ public class GameFlow extends Thread {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
             }
-
+            }
+            System.out.println(player+" processing "+message);
             switch (player.getCurrentState()) {
+
                 case INITIAL:
+                    System.out.println("player sent in initial");
                     if (message.equals("STEP_FINISHED")) {
+                        System.out.println("player sent in step");
                         player.setCurrentState(ENTER_USERNAME);
+                        //System.out.println(player.username);
                         player.send(ENTER_USERNAME);
                     }
                     break;
                 case ENTER_USERNAME:
                     if (player.username==null){
                     try {
+                        System.out.println("inväntar namn");
+                        try {
                         player.username = (String) player.receive();
-                        System.out.println(player.username);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("användarnamn: "+player.username);
                         if (message.equals("STEP_FINISHED")) {
                             if (player.turnToChoose) {  //om man får välja skickas man vidare här
                                 player.setCurrentState(CHOOSE_CATEGORY);
@@ -151,6 +161,7 @@ public class GameFlow extends Thread {
                     try {
                         currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
                         player.themeChoice = (String) player.receive();
+                        System.out.println("spelarval: "+player.themeChoice);
                         System.out.println(player.themeChoice);
                         player.turnToChoose = false;    //När man fått välja ändras boolean till false
                         player.getOpponent().turnToChoose = true;   //Och motståndarens ändras till true. Motståndare får välja nästa gång.
@@ -170,7 +181,15 @@ public class GameFlow extends Thread {
                             player.send(questions);
                             //vart kommer denna ifrån? det är en extra
                             //STEP_FINISHED istället för score
-                            System.out.println(player.receive().toString());
+                            //System.out.println("onödig STEP_FINISHED: "+player.receive().toString());
+                            System.out.println("inväntar poäng från "+player.username);
+                            try {
+                            player.pointsThisRound = (int) player.receive();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            player.setHasPlayedRound(true);
+                            //System.out.println(player.receive().toString());
                             player.pointsThisRound = (int) player.receive(); //Sparar rundans poäng
                             player.addPointsThisRound(counterOfRounds, player.pointsThisRound); //Sparar poäng till rundnumret - 1. En array där poängen sparar per runda
                             player.setHasPlayedRound(true); //När spelaren spelat en runda så sätts denna till true
@@ -217,7 +236,6 @@ public class GameFlow extends Thread {
                         player.send(WAITING);
                     }
             }
-        }
     }
 
         /*

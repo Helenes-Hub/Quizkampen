@@ -33,6 +33,10 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonB = new JButton();
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
+    private Timer questionTimer;
+    private JProgressBar timerBar;
+    private int timeLeft;
+    int timeFromServer = 10; //den ska ta in tiden för timern från servern
 
 
     private String currentCategory;
@@ -50,8 +54,8 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpFrame();
         while (true){
             try {
-                fromServer = client.receive();
                 System.out.println("står och lyssnar");
+                fromServer = client.receive();
                 if (fromServer != null) {
                     currentState = (int) fromServer;
                     System.out.println("Nuvarande status: "+currentState);
@@ -78,6 +82,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
            if(!userNameField.getText().trim().isEmpty()) {
+               client.send("STEP_FINISHED");
                toServer=userNameField.getText().trim();
                System.out.println(toServer);
                client.send(toServer);
@@ -110,6 +115,7 @@ public class GamePanel extends JFrame implements ActionListener {
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
             JButton clickedButton = (JButton) e.getSource();
+            //questionTimer.stop();
             checkAnswer(clickedButton.getText());
         }
     }
@@ -369,6 +375,33 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
         buttonD.setText(options.get(3));
+
+        timerBar = new JProgressBar(0, timeFromServer);
+        timerBar.setValue(10);
+        timerBar.setForeground(new Color(75, 181, 67));
+        timerBar.setBackground(new Color(211, 211, 211));
+        timerBar.setBounds(150, 150, 400, 20);
+        add(timerBar);
+        /*
+        questionTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                timeLeft--;
+                timerBar.setValue(timeLeft);
+
+                if (timeLeft <= timeFromServer / 3) {
+                    timerBar.setForeground(new Color(181, 67, 67));
+                }
+
+                if (timeLeft <= 0) {
+                    questionTimer.stop();
+                    //String correctAnswer = questions.get(currentQuestionIndex).getCorrectAnswer();
+                    checkAnswer(" ");
+                    //displayAnswer(null, correctAnswer);
+                }
+            }
+        });
+
+        questionTimer.start();*/
 
         //timer räknar ner till 0
         //om 0 status== checkanswer(null)
