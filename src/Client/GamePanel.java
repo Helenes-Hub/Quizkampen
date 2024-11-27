@@ -35,8 +35,8 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton readyButton=new JButton();
     private Timer questionTimer;
     private JProgressBar timerBar;
-    private int timeLeft;
-    int timeFromServer = 10; //den ska ta in tiden för timern från servern
+    private double timeLeft;
+    int timeFromServer = 5; //den ska ta in tiden för timern från servern
 
 
     private String currentCategory;
@@ -249,17 +249,18 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpButton(buttonC, 45, 470, 300, 100, "");
         setUpButton(buttonD, 355, 470, 300, 100, "");
 
-        timerBar = new JProgressBar(0, timeFromServer);
-        timerBar.setValue(10);
+        timerBar = new JProgressBar(0, timeFromServer * 100);
+        timerBar.setValue(timeFromServer * 100);
         timerBar.setForeground(new Color(75, 181, 67));
         timerBar.setBackground(new Color(211, 211, 211));
         timerBar.setBounds(150, 150, 400, 20);
         add(timerBar);
 
-        questionTimer = new Timer(1000, new ActionListener() {
+        questionTimer = new javax.swing.Timer(16, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                timeLeft--;
-                timerBar.setValue(timeLeft);
+                timeLeft -= 0.016;
+                timerBar.setValue((int)(timeLeft * 100));
 
                 if (timeLeft <= timeFromServer / 3) {
                     timerBar.setForeground(new Color(181, 67, 67));
@@ -267,7 +268,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
                 if (timeLeft <= 0) {
                     questionTimer.stop();
-                    //String correctAnswer = questions.get(currentQuestionIndex).getCorrectAnswer();
                     displayAnswer(null, correctAnswer);
                 }
             }
@@ -338,7 +338,7 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonD.setEnabled(false);
 
 
-        Timer pauseTimer = new Timer(1500, new ActionListener() {
+        Timer pauseTimer = new javax.swing.Timer(1500, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e2) {
@@ -443,7 +443,7 @@ public class GamePanel extends JFrame implements ActionListener {
         label.setText(text);
         label.setBounds(x, y, width, height);
         label.setForeground(new Color(211, 211, 211));
-        label.setFont(new Font("Impact", Font.BOLD, 30));
+        label.setFont(new Font("Impact", Font.BOLD, 28));
         label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
