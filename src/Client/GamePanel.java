@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private String correctAnswer;
 
 
-    Client  client = new Client();
+    Client client = new Client();
 
 
     public GamePanel() {
@@ -80,7 +81,8 @@ public class GamePanel extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == quitButton) {
             client.send("QUIT");
-            System.exit(0);
+            //client.close();
+            //System.exit(0);
         }
         if (e.getSource() == playButton) {
             client.send("STEP_FINISHED");

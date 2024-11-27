@@ -14,6 +14,7 @@ public class Player {
     String themeChoice;
     Boolean turnToChoose = false;
     Boolean hasPlayedRound = false;
+    protected Boolean gameOver = false;
     int pointsThisRound;
     int[] pointsAllRounds;
     int totalPoints;
@@ -66,13 +67,16 @@ public class Player {
         }
     }
 
-    public Object receive() {
+    public Object receive() throws InterruptedException {
         try {
             Object message = in.readObject();
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            System.out.println("Vi kommer hit");
+            if(Thread.interrupted()){
+                throw new InterruptedException();
+            }
+            throw new RuntimeException("FEL FEL FEL");
         }
     }
 
@@ -158,9 +162,9 @@ public class Player {
 
     public void close() {
         try {
-            in.close();
-            out.close();
-            socket.close();
+            if(in != null) {in.close();}
+            if(out != null) {out.close();}
+            if(socket != null) {socket.close();}
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -8,6 +8,8 @@ import java.util.Properties;
 
 public class GameFlow extends Thread {
 
+    Thread player1Thread;
+    Thread player2Thread;
 
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
@@ -28,6 +30,7 @@ public class GameFlow extends Thread {
     private Player currentPlayer;
     private Object questions;
     private Boolean roundOver = false;
+    private volatile Boolean gameIsOver = false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -57,18 +60,21 @@ public class GameFlow extends Thread {
     }
 
     public void runPlayer1() {
-        Thread player1Thread = new Thread(() -> {
+        player1Thread = new Thread(() -> {
             Object message = null;
             player1.send(timer);
             player1.send(questionsPerRound);
             player1.send(INITIAL);
             player1.setTurnToChoose(true);
-            while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) {
-
+            while (!player1.gameOver && !gameIsOver) {
                 try {
                     message = player1.receive();
-                    properties(player1, message);
-
+                    if(!gameIsOver) {
+                        properties(player1, message);
+                    }
+                } catch (RuntimeException e) {
+                    endGame(true);
+                    break;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -78,18 +84,21 @@ public class GameFlow extends Thread {
     }
 
     public void runPlayer2() {
-        Thread player2Thread = new Thread(() -> {
+        player2Thread = new Thread(() -> {
             Object message = null;
             player2.send(timer);
             player2.send(questionsPerRound);
             player2.send(INITIAL);
-            while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT) {
-
+            while (!player2.gameOver && !gameIsOver) {
                 try {
                     message = player2.receive();
-                    properties(player2, message);
-
-                } catch (Exception e) {
+                    if(!gameIsOver) {
+                        properties(player2, message);
+                    }
+                } catch (RuntimeException e) {
+                    endGame(true);
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -101,6 +110,11 @@ public class GameFlow extends Thread {
     public void properties(Player player, Object message) {
 
         synchronized (this) {
+            if(message == null || message.equals("QUIT") ){
+                System.out.println("Anropar endgame via properties");
+                endGame(true);
+            }
+
             if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
@@ -125,6 +139,8 @@ public class GameFlow extends Thread {
                         player.username = (String) player.receive();
                         player.setCurrentState(WAITING);
                         player.send(WAITING);
+                    } catch (RuntimeException e){
+                        endGame(true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -140,6 +156,8 @@ public class GameFlow extends Thread {
                             questions=getQuestions();
                             player.setCurrentState(QUIZZING);
                             player.send(QUIZZING);
+                        } catch (RuntimeException e) {
+                            endGame(true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -157,6 +175,8 @@ public class GameFlow extends Thread {
                             player.setHasPlayedRound(true);
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
+                        } catch (RuntimeException e) {
+                            endGame(true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -221,6 +241,10 @@ public class GameFlow extends Thread {
                     player.send(WAITING);
                 }
             case FINAL:
+                if (message.equals("QUIT")) {
+                    System.out.println("Vi stänger via case FINAL i Switch");
+                    endGame(true);
+                }
                 if (player.getCurrentState()==FINAL &&
                         player.opponent.getCurrentState()==FINAL)
                 {
@@ -228,6 +252,7 @@ public class GameFlow extends Thread {
                     player2.send(FINAL);
                     break;
                 }
+
 
         }
     }
@@ -252,6 +277,34 @@ public class GameFlow extends Thread {
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
         }
         return questionArray;
+    }
+
+    public synchronized void endGame(Boolean gameOver){
+        if(gameOver && !gameIsOver){
+            gameIsOver = true;
+            System.out.println("Trådar stängs av " + Thread.currentThread().getName());
+
+            try {
+                player1.gameOver = true;
+                player2.gameOver = true;
+
+                System.out.println("Väntar in trådavslut");
+
+                Thread.sleep(100);
+
+                player1.close();
+                player2.close();
+
+                System.out.println("Allt resetas");
+                player1Thread = null;
+                player2Thread = null;
+            } catch (InterruptedException e){
+                System.out.println("Problem med sleep");
+            } finally {
+                System.out.println("gameIsOver redo för nytt spel");
+                gameIsOver = false;
+            }
+        }
     }
 
 }

@@ -18,14 +18,15 @@ public class Client {
     int totalScore;
 
     public Client() {
-        try {this.socketToServer = new Socket("127.0.0.1", port);
+        try {
+            this.socketToServer = new Socket("127.0.0.1", port);
             this.out = new ObjectOutputStream(socketToServer.getOutputStream());
-             this.in = new ObjectInputStream(socketToServer.getInputStream());
-
+            this.in = new ObjectInputStream(socketToServer.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        //new Client.GamePanel(this);
+
+             //new Client.GamePanel(this);
     }
 
     public void send(Object message){
@@ -42,23 +43,27 @@ public class Client {
             Object message = in.readObject();
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            System.out.println("Vi kommer hit");
+            close();
+            System.out.println("Stängt!");
+            System.exit(0);
         }
+        return null;
     }
 
-    public void close() {
+    public synchronized void close() {
         try{
-            in.close();
-            out.close();
-            socketToServer.close();
+            if(socketToServer != null) {socketToServer.close();}
+            if(in != null) {in.close();}
+            if(out != null) {out.close();}
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Client client = new Client();
     }
+     */
 
 }
