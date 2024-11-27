@@ -12,6 +12,11 @@ public class Client {
     ObjectOutputStream out;
     ObjectInputStream in;
 
+    int opponentScoreThisRound;
+    int opponentTotalScore;
+    int score;
+    int totalScore;
+
     public Client() {
         try {this.socketToServer = new Socket("127.0.0.1", port);
             this.out = new ObjectOutputStream(socketToServer.getOutputStream());

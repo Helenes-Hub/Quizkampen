@@ -16,7 +16,7 @@ public class GameFlow extends Thread {
     private final int WAITING = 4;
     private final int SHOW_SCORE_THIS_ROUND = 5;
     private final int FINAL = 6;
-    private final int WAITING_FOR_SCORE = 7;
+    private final int FINAL_WAIT = 7;
     private final int QUIT = 8;
     /*private int currentStateP1 = 0;
     private int currentStateP2 = 0;
@@ -31,6 +31,7 @@ public class GameFlow extends Thread {
     private Player currentPlayer;
     private Object questions;
     private Boolean roundOver = false;
+    private Boolean gameFinished=false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -199,6 +200,7 @@ public class GameFlow extends Thread {
                         System.out.println("inväntar poäng från "+player.username);
                         try {
                             player.pointsThisRound = (int) player.receive();
+                            player.totalPoints += currentPlayer.pointsThisRound;
                             player.setHasPlayedRound(true);
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
@@ -240,6 +242,12 @@ public class GameFlow extends Thread {
                     player.opponent.setCurrentState(SHOW_SCORE_THIS_ROUND);
                     player.opponent.send(SHOW_SCORE_THIS_ROUND);
                     roundOver=false;
+                    try {
+                        player1.send(player1.opponent.pointsThisRound);
+                        player2.send(player2.opponent.pointsThisRound);
+                    }
+                    catch (Exception e)
+                    {e.printStackTrace();}
                     break;
                 }
                 else if (player.turnToChoose && (!player.hasPlayedRound)) {
@@ -257,14 +265,34 @@ public class GameFlow extends Thread {
                 }
                 break;}
             case SHOW_SCORE_THIS_ROUND:
-                if (message.equals("STEP_FINISHED")&& rounds<=counterOfRounds) {
+                if (player.opponent.getCurrentState() == WAITING
+                && player.opponent.hasPlayedRound
+                && rounds<=counterOfRounds) {
+                    System.out.println("sending to opponent wait");
                     player.setCurrentState(FINAL);
+                    player.opponent.setCurrentState(FINAL);
                     player.send(FINAL);
+                    player.opponent.send(FINAL);
+                    break;
                 }
-                else{
+                else if (message.equals("STEP_FINISHED")&& rounds<=counterOfRounds) {
+                    player.setCurrentState(FINAL);
+                    player.send(FINAL_WAIT);
+                    break;
+                }
+                else {
                     player.setCurrentState(WAITING);
                     player.send(WAITING);
                 }
+            case FINAL:
+                if (player.getCurrentState()==FINAL &&
+                        player.opponent.getCurrentState()==FINAL)
+                {
+                    player1.send(FINAL);
+                    player2.send(FINAL);
+                    break;
+                }
+
         }
     }
 

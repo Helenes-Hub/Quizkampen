@@ -16,7 +16,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private final int WAITING = 4;
     private final int SHOW_SCORE_THIS_ROUND = 5;
     private final int FINAL = 6;
-    private final int WAITING_FOR_SCORE = 7;
+    private final int FINAL_WAIT = 7;
     private int currentState = 0;
 
 
@@ -155,6 +155,8 @@ public class GamePanel extends JFrame implements ActionListener {
                 roundFinishedPanel();
                 //Knapp för att gå vidare från denna panel? I actionEvent från den client.send("STEP_FINISHED");
                 break;
+            case FINAL_WAIT:
+                waitingForOtherPlayerPanel();
             case FINAL:
                 finalScorePanel();
                 break;
@@ -284,7 +286,15 @@ public class GamePanel extends JFrame implements ActionListener {
     }
 
     private void roundFinishedPanel() {
-
+        try {
+            System.out.println("väntar på opponent score");
+            client.opponentScoreThisRound=(int)client.receive();
+            client.opponentTotalScore+=client.opponentScoreThisRound;
+            System.out.println("opponent score: "+ client.opponentScoreThisRound
+            +"\nopponent total score: "+ client.opponentTotalScore);
+        }
+        catch (Exception e)
+        {e.printStackTrace();}
         clearPanel();
         setUpButton(readyButton,250,400,200,100,"Continue");
         JLabel scoreLabel = new JLabel();
@@ -390,7 +400,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void finalScorePanel() {
         clearPanel();
-
+        //client har opponent score sparad i sin klass
         add(title);
         title.setText("Final score");
 

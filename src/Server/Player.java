@@ -16,6 +16,7 @@ public class Player {
     Boolean hasPlayedRound = false;
     int pointsThisRound;
     int[] pointsAllRounds;
+    int totalPoints;
 
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
