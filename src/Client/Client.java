@@ -12,6 +12,11 @@ public class Client {
     ObjectOutputStream out;
     ObjectInputStream in;
 
+    int opponentScoreThisRound;
+    int opponentTotalScore;
+    int score;
+    int totalScore;
+
     public Client() {
         try {this.socketToServer = new Socket("127.0.0.1", port);
             this.out = new ObjectOutputStream(socketToServer.getOutputStream());
@@ -25,7 +30,6 @@ public class Client {
 
     public void send(Object message){
         try {
-            System.out.println("skickar till server: "+ message.toString());
             out.writeObject(message);
             out.flush();
         } catch (IOException e) {
@@ -36,7 +40,6 @@ public class Client {
     public Object receive()  {
         try {
             Object message = in.readObject();
-            System.out.println("tar emot från server: "+ message.toString());
             return message;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
