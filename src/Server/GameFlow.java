@@ -164,8 +164,6 @@ public class GameFlow extends Thread {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    //player.turnToChoose = false;
-                    //Ta emot in poäng
                 }
                 break;
             case WAITING:
