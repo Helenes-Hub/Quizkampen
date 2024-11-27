@@ -257,6 +257,16 @@ public class GamePanel extends JFrame implements ActionListener {
         clearPanel();
         JLabel waitingForOtherPlayerLabel = new JLabel();
         setUpLabel(waitingForOtherPlayerLabel, 150, 50, 400, 350, "Waiting for the other player");
+
+        Timer dotTimer = new javax.swing.Timer(500, new ActionListener() {
+            private int dots = 0;
+            public void actionPerformed(ActionEvent e) {
+                dots = (dots + 1) % 4;
+                waitingForOtherPlayerLabel.setText("Waiting for the other player" + ".".repeat(dots));
+            }
+        });
+
+        dotTimer.start();
     }
 
     private void roundFinishedPanel() {
