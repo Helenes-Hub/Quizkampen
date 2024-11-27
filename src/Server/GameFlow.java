@@ -182,7 +182,9 @@ public class GameFlow extends Thread {
                     roundOver=false;
                     try {
                         player1.send(player1.opponent.pointsThisRound);
+                        player1.send(player1.opponent.username);
                         player2.send(player2.opponent.pointsThisRound);
+                        player2.send(player2.opponent.username);
                     }
                     catch (Exception e)
                     {e.printStackTrace();}
