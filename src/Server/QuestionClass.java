@@ -11,7 +11,7 @@ public class QuestionClass {
     private final String correctAnswer;
 
 
-    public QuestionClass(String question, List <String> options, String correctAnswer) {
+    public QuestionClass(String question, List<String> options, String correctAnswer) {
 
         this.question = question;
         this.options = options;

@@ -37,17 +37,17 @@ public enum ClassMaker {
             new QuestionClass("Vilket organ producerar insulin?",
                     Arrays.asList("Levern", "Bukspottkörteln", "Magsäcken", "Njuren"), "Bukspottkörteln"),
             new QuestionClass("Vad mäter en seismograf?",
-                              Arrays.asList("Grafer", "Lufttryck", "Jordskalv", "Vindstyrka"), "Jordskalv"),
+                    Arrays.asList("Grafer", "Lufttryck", "Jordskalv", "Vindstyrka"), "Jordskalv"),
             new QuestionClass("Hur lång tid tar ljus på sig att färdas från solen till oss?",
-                              Arrays.asList("8 minuter", "1 minut", "30 sekunder", "1 sekund"), "8 minuter"),
+                    Arrays.asList("8 minuter", "1 minut", "30 sekunder", "1 sekund"), "8 minuter"),
             new QuestionClass("Vilken djur är känd för att kunna ändra färg?",
-                              Arrays.asList("skameleont", "Kameleont", "Gecko", "Grodor"), "Kameleont"),
+                    Arrays.asList("Skameleont", "Kameleont", "Gecko", "Grodor"), "Kameleont"),
             new QuestionClass("Vilken planet är den varmaste i vårt solsystem?",
-                              Arrays.asList("Merkurius", "Venus", "Mars", "Jorden"), "Venus"),
+                    Arrays.asList("Merkurius", "Venus", "Mars", "Jorden"), "Venus"),
             new QuestionClass("Vad är huvudkomponenten i solens energi?",
-                              Arrays.asList("Fusionsreaktioner", "Kärnklyvning", "Kemiska reaktioner", "Gravitationskraft"), "Fusionsreaktioner"),
+                    Arrays.asList("Fusionsreaktioner", "Kärnklyvning", "Kemiska reaktioner", "Gravitationskraft"), "Fusionsreaktioner"),
             new QuestionClass("Vad är det latinska namnet för överarmsben?",
-                              Arrays.asList("Femur", "Humerus", "armus överus", "Radius"), "Humerus")
+                    Arrays.asList("Femur", "Humerus", "armus överus", "Radius"), "Humerus")
     ));
 
     private final List<QuestionClass> questions;

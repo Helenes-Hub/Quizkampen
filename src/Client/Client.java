@@ -27,7 +27,7 @@ public class Client {
         }
     }
 
-    public void send(Object message){
+    public void send(Object message) {
         try {
             out.writeObject(message);
             out.flush();
@@ -36,7 +36,7 @@ public class Client {
         }
     }
 
-    public Object receive()  {
+    public Object receive() {
         try {
             Object message = in.readObject();
             return message;
@@ -48,10 +48,16 @@ public class Client {
     }
 
     public synchronized void close() {
-        try{
-            if(out != null) {out.close();}
-            if(in != null) {in.close();}
-            if(socketToServer != null) {socketToServer.close();}
+        try {
+            if (out != null) {
+                out.close();
+            }
+            if (in != null) {
+                in.close();
+            }
+            if (socketToServer != null) {
+                socketToServer.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

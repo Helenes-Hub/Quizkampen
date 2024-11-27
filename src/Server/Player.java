@@ -62,7 +62,7 @@ public class Player {
             out.writeObject(message);
             out.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Send failed");
         }
     }
 
@@ -71,7 +71,7 @@ public class Player {
             Object message = in.readObject();
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            if(Thread.interrupted()){
+            if (Thread.interrupted()) {
                 throw new InterruptedException();
             }
             throw new RuntimeException();
@@ -160,9 +160,15 @@ public class Player {
 
     public void close() {
         try {
-            if(out != null) {out.close();}
-            if(in != null) {in.close();}
-            if(socket != null) {socket.close();}
+            if (out != null) {
+                out.close();
+            }
+            if (in != null) {
+                in.close();
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

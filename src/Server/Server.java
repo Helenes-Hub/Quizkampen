@@ -9,7 +9,7 @@ public class Server {
 
     public Server() {
 
-        try(ServerSocket serverS = new ServerSocket(port)) {
+        try (ServerSocket serverS = new ServerSocket(port)) {
             while (true) {
 
                 Player player1 = new Player(serverS.accept());

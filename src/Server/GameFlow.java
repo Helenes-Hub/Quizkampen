@@ -69,7 +69,7 @@ public class GameFlow extends Thread {
             while (!player1.gameOver && !gameIsOver) {
                 try {
                     message = player1.receive();
-                    if(!gameIsOver) {
+                    if (!gameIsOver) {
                         properties(player1, message);
                     }
                 } catch (RuntimeException e) {
@@ -92,13 +92,12 @@ public class GameFlow extends Thread {
             while (!player2.gameOver && !gameIsOver) {
                 try {
                     message = player2.receive();
-                    if(!gameIsOver) {
+                    if (!gameIsOver) {
                         properties(player2, message);
                     }
                 } catch (RuntimeException e) {
                     endGame(true);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -110,18 +109,18 @@ public class GameFlow extends Thread {
     public void properties(Player player, Object message) {
 
         synchronized (this) {
-            if(message == null || message.equals("QUIT") ){
+            if (message == null || message.equals("QUIT")) {
                 endGame(true);
             }
 
             if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
-                currentPlayer.themeChoice=null;
-                currentPlayer.turnToChoose=false;
-                currentPlayer.opponent.turnToChoose=true;
+                currentPlayer.themeChoice = null;
+                currentPlayer.turnToChoose = false;
+                currentPlayer.opponent.turnToChoose = true;
                 counterOfRounds++;
-                roundOver=true;
+                roundOver = true;
             }
         }
         switch (player.getCurrentState()) {
@@ -133,12 +132,12 @@ public class GameFlow extends Thread {
                 }
                 break;
             case ENTER_USERNAME:
-                if (player.username==null) {
+                if (player.username == null) {
                     try {
                         player.username = (String) player.receive();
                         player.setCurrentState(WAITING);
                         player.send(WAITING);
-                    } catch (RuntimeException e){
+                    } catch (RuntimeException e) {
                         endGame(true);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -146,13 +145,13 @@ public class GameFlow extends Thread {
                 }
                 break;
             case CHOOSE_CATEGORY:
-                if (player.themeChoice==null){
+                if (player.themeChoice == null) {
                     try {
-                        currentPlayer=player;
+                        currentPlayer = player;
 
                         try {
                             player.themeChoice = (String) player.receive();
-                            questions=getQuestions();
+                            questions = getQuestions();
                             player.setCurrentState(QUIZZING);
                             player.send(QUIZZING);
                         } catch (RuntimeException e) {
@@ -162,7 +161,8 @@ public class GameFlow extends Thread {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }}
+                    }
+                }
                 break;
             case QUIZZING:
                 if ("STEP_FINISHED".equals(message) || message.equals(QUIZZING)) {
@@ -188,56 +188,51 @@ public class GameFlow extends Thread {
             case WAITING:
                 synchronized (this) {
 
-                if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
-                    player.setCurrentState(QUIZZING);
-                    player.send(QUIZZING);
-                    break;
-                }
-                else if (roundOver) {
-                    player.setCurrentState(SHOW_SCORE_THIS_ROUND);
-                    player.send(SHOW_SCORE_THIS_ROUND);
-                    player.opponent.setCurrentState(SHOW_SCORE_THIS_ROUND);
-                    player.opponent.send(SHOW_SCORE_THIS_ROUND);
-                    roundOver=false;
-                    try {
-                        player1.send(player1.opponent.pointsThisRound);
-                        player1.send(player1.opponent.username);
-                        player2.send(player2.opponent.pointsThisRound);
-                        player2.send(player2.opponent.username);
-                    }
-                    catch (Exception e)
-                    {e.printStackTrace();}
-                    break;
-                }
-                else if (player.turnToChoose && (!player.hasPlayedRound)) {
-                    player.setCurrentState(CHOOSE_CATEGORY);
-                    player.send(CHOOSE_CATEGORY);
-                    break;
-                }
-                 else if (player.opponent.getCurrentState() == WAITING) {
+                    if (player.getOpponent().hasPlayedRound && (!player.hasPlayedRound)) {
+                        player.setCurrentState(QUIZZING);
+                        player.send(QUIZZING);
+                        break;
+                    } else if (roundOver) {
+                        player.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                        player.send(SHOW_SCORE_THIS_ROUND);
+                        player.opponent.setCurrentState(SHOW_SCORE_THIS_ROUND);
+                        player.opponent.send(SHOW_SCORE_THIS_ROUND);
+                        roundOver = false;
+                        try {
+                            player1.send(player1.opponent.pointsThisRound);
+                            player1.send(player1.opponent.username);
+                            player2.send(player2.opponent.pointsThisRound);
+                            player2.send(player2.opponent.username);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    } else if (player.turnToChoose && (!player.hasPlayedRound)) {
+                        player.setCurrentState(CHOOSE_CATEGORY);
+                        player.send(CHOOSE_CATEGORY);
+                        break;
+                    } else if (player.opponent.getCurrentState() == WAITING) {
                         player.opponent.send(WAITING);
                         break;
+                    } else {
+                        System.out.println("inga kriterium uppnåddes");
                     }
-                else {
-                    System.out.println("inga kriterium uppnåddes");
+                    break;
                 }
-                break;}
             case SHOW_SCORE_THIS_ROUND:
                 if (player.opponent.getCurrentState() == WAITING
-                && player.opponent.hasPlayedRound
-                && rounds<=counterOfRounds) {
+                        && player.opponent.hasPlayedRound
+                        && rounds <= counterOfRounds) {
                     player.setCurrentState(FINAL);
                     player.opponent.setCurrentState(FINAL);
                     player.send(FINAL);
                     player.opponent.send(FINAL);
                     break;
-                }
-                else if (message.equals("STEP_FINISHED")&& rounds<=counterOfRounds) {
+                } else if (message.equals("STEP_FINISHED") && rounds <= counterOfRounds) {
                     player.setCurrentState(FINAL);
                     player.send(FINAL_WAIT);
                     break;
-                }
-                else {
+                } else {
                     player.setCurrentState(WAITING);
                     player.send(WAITING);
                 }
@@ -245,15 +240,13 @@ public class GameFlow extends Thread {
                 if (message.equals("QUIT")) {
                     endGame(true);
                 }
-                if (player.getCurrentState()==FINAL &&
-                        player.opponent.getCurrentState()==FINAL)
-                {
+                /*if (player.getCurrentState() == FINAL &&
+                        player.opponent.getCurrentState() == FINAL) {
                     player1.send(FINAL);
                     player2.send(FINAL);
                     break;
-                }
-
-
+                } Detta stör stängningen på något sätt....
+                 */
         }
     }
 
@@ -279,23 +272,23 @@ public class GameFlow extends Thread {
         return questionArray;
     }
 
-    public synchronized void endGame(Boolean gameOver){
-        if(gameOver && !gameIsOver){
+    public synchronized void endGame(Boolean gameOver) {
+        if (gameOver && !gameIsOver) {
             gameIsOver = true;
             System.out.println("Trådar stängs av " + Thread.currentThread().getName());
 
             try {
-                player1.close();
-                player2.close();
-
                 player1.gameOver = true;
                 player2.gameOver = true;
 
                 Thread.sleep(100);
 
+                player1.close();
+                player2.close();
+
                 player1Thread = null;
                 player2Thread = null;
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
                 gameIsOver = false;

@@ -33,7 +33,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton buttonB = new JButton();
     private JButton buttonC = new JButton();
     private JButton buttonD = new JButton();
-    private JButton readyButton=new JButton();
+    private JButton readyButton = new JButton();
     private Timer questionTimer;
     private JProgressBar timerBar;
     private double timeLeft;
@@ -62,8 +62,8 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpFrame();
         setupActionlisteners();
         try {
-         timeFromServer=(int)client.receive();
-         questionsPerRound=(int)client.receive();
+            timeFromServer = (int) client.receive();
+            questionsPerRound = (int) client.receive();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,7 +113,7 @@ public class GamePanel extends JFrame implements ActionListener {
             questionTimer.stop();
             displayAnswer(clickedButton, correctAnswer);
         }
-        if (e.getSource() == readyButton){
+        if (e.getSource() == readyButton) {
             client.send("STEP_FINISHED");
         }
     }
@@ -236,7 +236,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
             public void actionPerformed(ActionEvent e) {
                 timeLeft -= 0.064;
-                timerBar.setValue((int)(timeLeft * 100));
+                timerBar.setValue((int) (timeLeft * 100));
 
                 if (timeLeft <= timeFromServer / 3) {
                     timerBar.setForeground(new Color(181, 67, 67));
@@ -260,6 +260,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
         Timer dotTimer = new javax.swing.Timer(500, new ActionListener() {
             private int dots = 0;
+
             public void actionPerformed(ActionEvent e) {
                 dots = (dots + 1) % 4;
                 waitingForOtherPlayerLabel.setText("Waiting for the other player" + ".".repeat(dots));
@@ -271,12 +272,12 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void roundFinishedPanel() {
         try {
-           opponentScoreThisRound = client.opponentScoreThisRound=(int)client.receive();
-           opponentUsername = (String)client.receive();
-           opponentTotalScore = client.opponentTotalScore+=client.opponentScoreThisRound;
+            opponentScoreThisRound = client.opponentScoreThisRound = (int) client.receive();
+            opponentUsername = (String) client.receive();
+            opponentTotalScore = client.opponentTotalScore += client.opponentScoreThisRound;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception e)
-        {e.printStackTrace();}
 
         clearPanel();
         add(title);
@@ -305,23 +306,23 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void checkAnswer(String answer) {
 
-            if (answer.equals(correctAnswer))
-                score++;
+        if (answer.equals(correctAnswer))
+            score++;
 
-            currentQuestionIndex++;
+        currentQuestionIndex++;
 
-            if (currentQuestionIndex < questionArray[0].length) {
-                nextQuestion();
-            } else {
-                totalScore+=score;
-                totalQuestions+=questionsPerRound;
-                try {
-                    client.send(score);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+        if (currentQuestionIndex < questionArray[0].length) {
+            nextQuestion();
+        } else {
+            totalScore += score;
+            totalQuestions += questionsPerRound;
+            try {
+                client.send(score);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+        }
     }
 
     private void displayAnswer(JButton clickedButton, String correctAnswer) {
@@ -398,7 +399,7 @@ public class GamePanel extends JFrame implements ActionListener {
         String draw = "It's a draw!";
 
         add(title);
-        if(totalScore > opponentTotalScore){
+        if (totalScore > opponentTotalScore) {
             title.setText(win);
         } else if (totalScore == opponentTotalScore) {
             title.setText(draw);
@@ -483,7 +484,7 @@ public class GamePanel extends JFrame implements ActionListener {
         repaint();
     }
 
-    private void setupActionlisteners(){
+    private void setupActionlisteners() {
         buttonA.addActionListener(this);
         buttonB.addActionListener(this);
         buttonC.addActionListener(this);
@@ -495,7 +496,6 @@ public class GamePanel extends JFrame implements ActionListener {
         enterNameButton.addActionListener(this);
         readyButton.addActionListener(this);
     }
-
 
     public static void main(String[] args) {
         new GamePanel();
