@@ -84,8 +84,6 @@ public class GamePanel extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == quitButton) {
             client.send("QUIT");
-            //client.close();
-            //System.exit(0);
         }
         if (e.getSource() == playButton) {
             client.send("STEP_FINISHED");
@@ -395,8 +393,19 @@ public class GamePanel extends JFrame implements ActionListener {
     private void finalScorePanel() {
         clearPanel();
 
+        String win = "You won!";
+        String lose = "You lost...";
+        String draw = "It's a draw!";
+
         add(title);
-        title.setText("Final score");
+        if(totalScore > opponentTotalScore){
+            title.setText(win);
+        } else if (totalScore == opponentTotalScore) {
+            title.setText(draw);
+        } else {
+            title.setText(lose);
+        }
+
         title.setBounds(150, 30, 400, 80);
         title.setFont(new Font("Impact", Font.BOLD, 50));
 

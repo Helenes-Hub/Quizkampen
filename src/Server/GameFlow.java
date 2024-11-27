@@ -287,15 +287,15 @@ public class GameFlow extends Thread {
             System.out.println("Trådar stängs av " + Thread.currentThread().getName());
 
             try {
+                player1.close();
+                player2.close();
+
                 player1.gameOver = true;
                 player2.gameOver = true;
 
                 System.out.println("Väntar in trådavslut");
 
                 Thread.sleep(100);
-
-                player1.close();
-                player2.close();
 
                 System.out.println("Allt resetas");
                 player1Thread = null;
@@ -308,7 +308,6 @@ public class GameFlow extends Thread {
             }
         }
     }
-
 }
 
 

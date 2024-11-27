@@ -72,11 +72,10 @@ public class Player {
             Object message = in.readObject();
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Vi kommer hit");
             if(Thread.interrupted()){
                 throw new InterruptedException();
             }
-            throw new RuntimeException("FEL FEL FEL");
+            throw new RuntimeException();
         }
     }
 
@@ -162,8 +161,8 @@ public class Player {
 
     public void close() {
         try {
-            if(in != null) {in.close();}
             if(out != null) {out.close();}
+            if(in != null) {in.close();}
             if(socket != null) {socket.close();}
         } catch (IOException e) {
             e.printStackTrace();
