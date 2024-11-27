@@ -36,7 +36,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private Timer questionTimer;
     private JProgressBar timerBar;
     private double timeLeft;
-    int timeFromServer = 5; //den ska ta in tiden för timern från servern
+    int timeFromServer;
 
 
     private String currentCategory;
@@ -243,7 +243,7 @@ public class GamePanel extends JFrame implements ActionListener {
                 button.removeActionListener(al);
             }}*/
 
-        setUpLabel(question, 50, 200, 600, 100, "");
+        setUpLabel(question, 25, 200, 650, 100, "");
         setUpButton(buttonA, 45, 350, 300, 100, "");
         setUpButton(buttonB, 355, 350, 300, 100, "");
         setUpButton(buttonC, 45, 470, 300, 100, "");
@@ -256,10 +256,10 @@ public class GamePanel extends JFrame implements ActionListener {
         timerBar.setBounds(150, 150, 400, 20);
         add(timerBar);
 
-        questionTimer = new javax.swing.Timer(16, new ActionListener() {
+        questionTimer = new javax.swing.Timer(32, new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                timeLeft -= 0.016;
+                timeLeft -= 0.064;
                 timerBar.setValue((int)(timeLeft * 100));
 
                 if (timeLeft <= timeFromServer / 3) {
@@ -417,7 +417,7 @@ public class GamePanel extends JFrame implements ActionListener {
         add(button);
         button.setBounds(x, y, width, height);
         button.setBackground(new Color(211, 211, 211));
-        button.setFont(new Font("Impact", Font.BOLD, 30));
+        button.setFont(new Font("Impact", Font.BOLD, 27));
         button.setFocusable(false);
         //button.addActionListener(this);
         button.setText(text);
@@ -428,7 +428,7 @@ public class GamePanel extends JFrame implements ActionListener {
         add(textField);
         textField.setBounds(x, y, width, height);
         textField.setBackground(new Color(211, 211, 211));
-        textField.setFont(new Font("Impact", Font.BOLD, 30));
+        textField.setFont(new Font("Impact", Font.BOLD, 27));
         textField.setHorizontalAlignment(SwingConstants.CENTER);
         textField.setBorder(null);
         textField.setEditable(editable);
@@ -443,7 +443,7 @@ public class GamePanel extends JFrame implements ActionListener {
         label.setText(text);
         label.setBounds(x, y, width, height);
         label.setForeground(new Color(211, 211, 211));
-        label.setFont(new Font("Impact", Font.BOLD, 28));
+        label.setFont(new Font("Impact", Font.BOLD, 27));
         label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
