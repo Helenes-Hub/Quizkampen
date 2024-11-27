@@ -66,10 +66,8 @@ public class GamePanel extends JFrame implements ActionListener {
         while (true) {
             try {
                 fromServer = client.receive();
-                System.out.println("står och lyssnar");
                 if (fromServer != null) {
                     currentState = (int) fromServer;
-                    System.out.println("Nuvarande status: " + currentState);
                     handleState();
                 }
             } catch (Exception e) {
@@ -85,40 +83,26 @@ public class GamePanel extends JFrame implements ActionListener {
             System.exit(0);
         }
         if (e.getSource() == playButton) {
-            //currentState = ENTER_USERNAME;
             client.send("STEP_FINISHED");
-            //handleState();
             return;
         }
         if (e.getSource() == enterNameButton || e.getSource() == userNameField) {
             if (!userNameField.getText().trim().isEmpty()) {
                 toServer = userNameField.getText().trim();
-                System.out.println(toServer);
                 client.send(toServer);
-                //client.send("STEP_FINISHED");
-                //currentState = WAITING;
-                //handleState();
                 return;
             }
         }
         if (e.getSource() == category1Button) {
             toServer = category1Button.getText().toUpperCase();
-            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             client.send(toServer.toString());
-            //client.send("STEP_FINISHED");
-            //currentState = QUIZZING;
-            //handleState();
             return;
         }
         if (e.getSource() == category2Button) {
             toServer = category2Button.getText().toUpperCase();
-            //client.send(CHOOSE_CATEGORY);
             currentCategory = (String) toServer;
             client.send(toServer.toString());
-            //client.send("STEP_FINISHED");
-            //currentState = QUIZZING;
-            //handleState();
             return;
         }
         if (e.getSource() == buttonA || e.getSource() == buttonB || e.getSource() == buttonC || e.getSource() == buttonD) {
@@ -146,14 +130,11 @@ public class GamePanel extends JFrame implements ActionListener {
                 startGamePanel();
                 break;
             case WAITING:
-                //client.send(currentState);
                 waitingForOtherPlayerPanel();
                 client.send("STEP_FINISHED");
-                //client.send("STEP_FINISHED");
                 break;
             case SHOW_SCORE_THIS_ROUND:
                 roundFinishedPanel();
-                //Knapp för att gå vidare från denna panel? I actionEvent från den client.send("STEP_FINISHED");
                 break;
             case FINAL_WAIT:
                 waitingForOtherPlayerPanel();
@@ -207,10 +188,6 @@ public class GamePanel extends JFrame implements ActionListener {
         add(title);
         title.setText("Select a category");
         title.setFont(new Font("Impact", Font.BOLD, 40));
-        /*for (JButton button : new JButton[]{category1Button,category2Button}) {
-            for (ActionListener al : button.getActionListeners()) {
-                button.removeActionListener(al);
-            }}*/
 
         setUpButton(category1Button, 100, 300, 200, 100, "Animals");
         setUpButton(category2Button, 400, 300, 200, 100, "Science");
@@ -220,9 +197,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private void startGamePanel() {
         client.send("STEP_FINISHED");
         try {
-            System.out.println("inväntar listan");
             this.questionArray = (ArrayList[][]) client.receive();
-            System.out.println("har mottagit listan");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -240,10 +215,6 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setBounds(150, 50, 400, 100);
         title.setText("Question " + (currentQuestionIndex + 1));
         title.setFont(new Font("Impact", Font.BOLD, 70));
-        /*for (JButton button : new JButton[]{buttonA, buttonB, buttonC, buttonD}) {
-            for (ActionListener al : button.getActionListeners()) {
-                button.removeActionListener(al);
-            }}*/
 
         setUpLabel(question, 50, 200, 600, 100, "");
         setUpButton(buttonA, 45, 350, 300, 100, "");
@@ -287,11 +258,8 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void roundFinishedPanel() {
         try {
-            System.out.println("väntar på opponent score");
             client.opponentScoreThisRound=(int)client.receive();
             client.opponentTotalScore+=client.opponentScoreThisRound;
-            System.out.println("opponent score: "+ client.opponentScoreThisRound
-            +"\nopponent total score: "+ client.opponentTotalScore);
         }
         catch (Exception e)
         {e.printStackTrace();}
@@ -303,33 +271,23 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void checkAnswer(String answer) {
 
-            //Server.QuestionClass currentQuestion = questions.get(currentQuestionIndex);
-            //System.out.println(correctAnswer);
             if (answer.equals(correctAnswer))
                 score++;
 
             currentQuestionIndex++;
-        System.out.println("currentquestionIndex: "+currentQuestionIndex);
-        System.out.println(questionArray[0].length);
 
             if (currentQuestionIndex < questionArray[0].length) {
-                System.out.println("anropar next från checkanswer");
                 nextQuestion();
             } else {
-                System.out.println("skickar poäng till server: " + score);
                 totalScore+=score;
                 totalQuestions+=questionsPerRound;
                 try {
                     client.send(score);
-
-                    //client.send("STEP_FINISHED");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                //waitingForOtherPlayerPanel();
             }
-
     }
 
     private void displayAnswer(JButton clickedButton, String correctAnswer) {
@@ -346,7 +304,6 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setEnabled(false);
         buttonC.setEnabled(false);
         buttonD.setEnabled(false);
-
 
         Timer pauseTimer = new Timer(1500, new ActionListener() {
 
@@ -400,7 +357,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void finalScorePanel() {
         clearPanel();
-        //client har opponent score sparad i sin klass
         add(title);
         title.setText("Final score");
 
@@ -429,7 +385,6 @@ public class GamePanel extends JFrame implements ActionListener {
         button.setBackground(new Color(211, 211, 211));
         button.setFont(new Font("Impact", Font.BOLD, 30));
         button.setFocusable(false);
-        //button.addActionListener(this);
         button.setText(text);
     }
 
