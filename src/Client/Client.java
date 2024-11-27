@@ -3,7 +3,7 @@ package Client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-//Start på klassen. Skapar writers, readers och kopplar upp socket med port och adress.
+
 public class Client {
 
     private final int port = 5050;
@@ -25,8 +25,6 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-             //new Client.GamePanel(this);
     }
 
     public void send(Object message){
@@ -43,9 +41,7 @@ public class Client {
             Object message = in.readObject();
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Vi kommer hit");
             close();
-            System.out.println("Stängt!");
             System.exit(0);
         }
         return null;
@@ -53,17 +49,11 @@ public class Client {
 
     public synchronized void close() {
         try{
-            if(socketToServer != null) {socketToServer.close();}
-            if(in != null) {in.close();}
             if(out != null) {out.close();}
+            if(in != null) {in.close();}
+            if(socketToServer != null) {socketToServer.close();}
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    /*public static void main(String[] args) {
-        Client client = new Client();
-    }
-     */
-
 }

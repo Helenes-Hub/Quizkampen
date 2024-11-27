@@ -111,7 +111,6 @@ public class GameFlow extends Thread {
 
         synchronized (this) {
             if(message == null || message.equals("QUIT") ){
-                System.out.println("Anropar endgame via properties");
                 endGame(true);
             }
 
@@ -149,7 +148,7 @@ public class GameFlow extends Thread {
             case CHOOSE_CATEGORY:
                 if (player.themeChoice==null){
                     try {
-                        currentPlayer=player;       //Här sätts currentPlayer. Först till spelare 1.
+                        currentPlayer=player;
 
                         try {
                             player.themeChoice = (String) player.receive();
@@ -244,7 +243,6 @@ public class GameFlow extends Thread {
                 }
             case FINAL:
                 if (message.equals("QUIT")) {
-                    System.out.println("Vi stänger via case FINAL i Switch");
                     endGame(true);
                 }
                 if (player.getCurrentState()==FINAL &&
@@ -293,17 +291,13 @@ public class GameFlow extends Thread {
                 player1.gameOver = true;
                 player2.gameOver = true;
 
-                System.out.println("Väntar in trådavslut");
-
                 Thread.sleep(100);
 
-                System.out.println("Allt resetas");
                 player1Thread = null;
                 player2Thread = null;
             } catch (InterruptedException e){
-                System.out.println("Problem med sleep");
+                e.printStackTrace();
             } finally {
-                System.out.println("gameIsOver redo för nytt spel");
                 gameIsOver = false;
             }
         }
