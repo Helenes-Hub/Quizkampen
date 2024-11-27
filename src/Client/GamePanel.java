@@ -83,8 +83,8 @@ public class GamePanel extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == quitButton) {
             client.send("QUIT");
-            client.close();     //Måste checkas!!
-            System.exit(0);
+            //client.close();
+            //System.exit(0);
         }
         if (e.getSource() == playButton) {
             //currentState = ENTER_USERNAME;

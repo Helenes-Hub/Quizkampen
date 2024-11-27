@@ -33,7 +33,7 @@ public class GameFlow extends Thread {
     private Player currentPlayer;
     private Object questions;
     private Boolean roundOver = false;
-    private Boolean gameIsOver = false;
+    private volatile Boolean gameIsOver = false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -71,23 +71,24 @@ public class GameFlow extends Thread {
             player1.send(questionsPerRound);
             player1.send(INITIAL);
             player1.setTurnToChoose(true);
-            while (player1.getCurrentState() != QUIT || player2.getCurrentState() != QUIT) { //Kan sättas till true bara?
+            while (!player1.gameOver && !gameIsOver) {
                 System.out.println("tråd 1 aktiv");
 
                 try {
                     message = player1.receive();
                     //properties(player1, message);
                     System.out.println("har mottagit 1 state: " + message);
-                   // if (message.equals("QUIT")){
-                     //  endGame(gameIsOver);
-                    //}
-
-                    properties(player1, message);
+                    if(!gameIsOver) {
+                        properties(player1, message);
+                    }
 
                     System.out.println("har uppdaterat 1 state: " + player1.getCurrentState());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+            if (player1.gameOver){
+                endGame(player1.gameOver);
             }
         });
 
@@ -100,23 +101,23 @@ public class GameFlow extends Thread {
             player2.send(timer);
             player2.send(questionsPerRound);
             player2.send(INITIAL);
-            while (player2.getCurrentState() != QUIT || player1.getCurrentState() != QUIT){ //Kan sättas till true bara?
+            while (!player2.gameOver && !gameIsOver) {
                 System.out.println("tråd 2 aktiv");
 
                 try {
                     message = player2.receive();
                     //properties(player2, message);
                     System.out.println("har mottagit 2 state: " + message + " med nuvarande status: "+ player2.getCurrentState());
-
-                   // if (message.equals("QUIT")){
-                     //   endGame(gameIsOver);
-                    //}
-
-                    properties(player2, message);
+                    if(!gameIsOver) {
+                        properties(player2, message);
+                    }
 
                     System.out.println("har uppdaterat 2 state: " + player2.getCurrentState());
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                if (player1.gameOver){
+                    endGame(player1.gameOver);
                 }
             }
         });
@@ -129,9 +130,10 @@ public class GameFlow extends Thread {
         //player.send(INITIAL);
 
         synchronized (this) {
-            //if(player1.gameOver && player2.gameOver){
-              //  gameIsOver = true;
-            //}
+            if(message.equals("QUIT") || message.equals(null)){
+                System.out.println("Vi stänger via Switch");
+                endGame(true);
+            }
 
             if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
@@ -280,12 +282,11 @@ public class GameFlow extends Thread {
                     player.send(WAITING);
                 }
                 break;
-                //case FINAL:
-                  //  if (message.equals("QUIT")) {
-                    //    player1.gameOver = true;
-                      //  player2.gameOver = true;
-                        //endGame(gameIsOver);
-                    //}
+                case FINAL:
+                    if (message.equals("QUIT")) {
+                        System.out.println("Vi stänger via Switch");
+                        endGame(true);
+                    }
         }
     }
 
@@ -464,13 +465,27 @@ public class GameFlow extends Thread {
         return questionArray;
     }
 
-    public void endGame(Boolean gameIsOver){
-        if(gameIsOver){
+    public synchronized void endGame(Boolean gameOver){
+        if(gameOver && !gameIsOver){
+            gameIsOver = true;
+            System.out.println("Trådar stängs");
+
+            player1.gameOver = true;
+            player2.gameOver = true;
             player1.close();
             player2.close();
-            player1Thread.interrupt();
-            player2Thread.interrupt();
-            System.exit(0);
+            System.out.println("Väntar in trådavslut");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.out.println("Problem med sleep");
+                e.printStackTrace();
+            }
+
+            System.out.println("Allt resetas");
+            player1Thread = null;
+            player2Thread = null;
+            gameIsOver = false;
         }
     }
 

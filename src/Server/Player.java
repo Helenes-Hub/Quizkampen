@@ -67,17 +67,18 @@ public class Player {
         }
     }
 
-    public Object receive() {
+    public Object receive() throws InterruptedException {
         try {
             Object message = in.readObject();
             System.out.println("tar emot från client: "+this.username+" "+ message.toString());
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            close();
-            System.out.println("Försöker stänga");
-            System.exit(0);
+            System.out.println("Vi kommer hit");
+            if(Thread.interrupted()){
+                throw new InterruptedException();
+            }
         }
-        return "FEL FEL FEL";
+        return null;
     }
 
     public void setOpponent(Player opponent) {

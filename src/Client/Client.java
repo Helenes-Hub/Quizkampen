@@ -40,12 +40,12 @@ public class Client {
             System.out.println("tar emot från server: "+ message.toString());
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Client kan inte ta emot.");
+            System.out.println("Vi kommer hit");
             close();
-            System.out.println("Försöker stänga.");
-            System.exit(1);
+            System.out.println("Stängt!");
+            System.exit(0);
         }
-        return "FEL FEL FEL";
+        return null;
     }
 
     public synchronized void close() {
