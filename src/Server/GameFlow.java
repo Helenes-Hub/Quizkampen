@@ -83,12 +83,12 @@ public class GameFlow extends Thread {
                     }
 
                     System.out.println("har uppdaterat 1 state: " + player1.getCurrentState());
+                } catch (RuntimeException e) {
+                    endGame(true);
+                    break;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            if (player1.gameOver){
-                endGame(player1.gameOver);
             }
         });
 
@@ -113,11 +113,11 @@ public class GameFlow extends Thread {
                     }
 
                     System.out.println("har uppdaterat 2 state: " + player2.getCurrentState());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (RuntimeException e) {
+                    endGame(true);
                 }
-                if (player1.gameOver){
-                    endGame(player1.gameOver);
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -130,8 +130,8 @@ public class GameFlow extends Thread {
         //player.send(INITIAL);
 
         synchronized (this) {
-            if(message.equals("QUIT") || message.equals(null)){
-                System.out.println("Vi stänger via Switch");
+            if(message == null || message.equals("QUIT") ){
+                System.out.println("Anropar endgame via properties");
                 endGame(true);
             }
 
@@ -284,7 +284,7 @@ public class GameFlow extends Thread {
                 break;
                 case FINAL:
                     if (message.equals("QUIT")) {
-                        System.out.println("Vi stänger via Switch");
+                        System.out.println("Vi stänger via case FINAL i Switch");
                         endGame(true);
                     }
         }
@@ -468,12 +468,11 @@ public class GameFlow extends Thread {
     public synchronized void endGame(Boolean gameOver){
         if(gameOver && !gameIsOver){
             gameIsOver = true;
-            System.out.println("Trådar stängs");
+            System.out.println("Trådar stängs av " + Thread.currentThread().getName());
 
             player1.gameOver = true;
             player2.gameOver = true;
-            player1.close();
-            player2.close();
+
             System.out.println("Väntar in trådavslut");
             try {
                 Thread.sleep(100);
@@ -481,6 +480,9 @@ public class GameFlow extends Thread {
                 System.out.println("Problem med sleep");
                 e.printStackTrace();
             }
+
+            player1.close();
+            player2.close();
 
             System.out.println("Allt resetas");
             player1Thread = null;

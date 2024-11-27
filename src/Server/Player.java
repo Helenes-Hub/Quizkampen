@@ -77,8 +77,8 @@ public class Player {
             if(Thread.interrupted()){
                 throw new InterruptedException();
             }
+            throw new RuntimeException("FEL FEL FEL");
         }
-        return null;
     }
 
     public void setOpponent(Player opponent) {
