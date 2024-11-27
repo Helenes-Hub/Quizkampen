@@ -165,6 +165,8 @@ public class GameFlow extends Thread {
                             player.username = (String) player.receive();
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
+                        } catch (RuntimeException e) {
+                            endGame(true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -194,6 +196,8 @@ public class GameFlow extends Thread {
                             questions=getQuestions();
                             player.setCurrentState(QUIZZING);
                             player.send(QUIZZING);
+                        } catch (RuntimeException e) {
+                            endGame(true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -218,6 +222,8 @@ public class GameFlow extends Thread {
                             player.setHasPlayedRound(true);
                             player.setCurrentState(WAITING);
                             player.send(WAITING);
+                        } catch (RuntimeException e) {
+                            endGame(true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -470,24 +476,26 @@ public class GameFlow extends Thread {
             gameIsOver = true;
             System.out.println("Trådar stängs av " + Thread.currentThread().getName());
 
-            player1.gameOver = true;
-            player2.gameOver = true;
-
-            System.out.println("Väntar in trådavslut");
             try {
+                player1.gameOver = true;
+                player2.gameOver = true;
+
+                System.out.println("Väntar in trådavslut");
+
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+
+                player1.close();
+                player2.close();
+
+                System.out.println("Allt resetas");
+                player1Thread = null;
+                player2Thread = null;
+            } catch (InterruptedException e){
                 System.out.println("Problem med sleep");
-                e.printStackTrace();
+            } finally {
+                System.out.println("gameIsOver redo för nytt spel");
+                gameIsOver = false;
             }
-
-            player1.close();
-            player2.close();
-
-            System.out.println("Allt resetas");
-            player1Thread = null;
-            player2Thread = null;
-            gameIsOver = false;
         }
     }
 
