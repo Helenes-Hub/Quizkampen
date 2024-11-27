@@ -36,13 +36,15 @@ public class GamePanel extends JFrame implements ActionListener {
     private JButton readyButton=new JButton();
     private Timer questionTimer;
     private JProgressBar timerBar;
-    private int timeLeft;
-    int timeFromServer = 10; //den ska ta in tiden för timern från servern
+    private double timeLeft;
+    int timeFromServer;
 
 
     private String currentCategory;
     private int currentQuestionIndex;
     private int score;
+    private int opponentScoreThisRound;
+    private int opponentTotalScore;
     private int totalScore;
     private int questionsPerRound;
     private int totalQuestions;
@@ -50,6 +52,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private Object fromServer;
     private Object toServer;
     private String correctAnswer;
+    private String opponentUsername;
 
 
     Client client = new Client();
@@ -218,23 +221,24 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setText("Question " + (currentQuestionIndex + 1));
         title.setFont(new Font("Impact", Font.BOLD, 70));
 
-        setUpLabel(question, 50, 200, 600, 100, "");
+        setUpLabel(question, 25, 200, 650, 100, "");
         setUpButton(buttonA, 45, 350, 300, 100, "");
         setUpButton(buttonB, 355, 350, 300, 100, "");
         setUpButton(buttonC, 45, 470, 300, 100, "");
         setUpButton(buttonD, 355, 470, 300, 100, "");
 
-        timerBar = new JProgressBar(0, timeFromServer);
-        timerBar.setValue(10);
+        timerBar = new JProgressBar(0, timeFromServer * 100);
+        timerBar.setValue(timeFromServer * 100);
         timerBar.setForeground(new Color(75, 181, 67));
         timerBar.setBackground(new Color(211, 211, 211));
         timerBar.setBounds(150, 150, 400, 20);
         add(timerBar);
 
-        questionTimer = new Timer(1000, new ActionListener() {
+        questionTimer = new javax.swing.Timer(32, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                timeLeft--;
-                timerBar.setValue(timeLeft);
+                timeLeft -= 0.064;
+                timerBar.setValue((int)(timeLeft * 100));
 
                 if (timeLeft <= timeFromServer / 3) {
                     timerBar.setForeground(new Color(181, 67, 67));
@@ -242,7 +246,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
                 if (timeLeft <= 0) {
                     questionTimer.stop();
-                    //String correctAnswer = questions.get(currentQuestionIndex).getCorrectAnswer();
                     displayAnswer(null, correctAnswer);
                 }
             }
@@ -255,20 +258,51 @@ public class GamePanel extends JFrame implements ActionListener {
     private void waitingForOtherPlayerPanel() {
         clearPanel();
         JLabel waitingForOtherPlayerLabel = new JLabel();
-        setUpLabel(waitingForOtherPlayerLabel, 150, 50, 400, 350, "Waiting for other player");
+        setUpLabel(waitingForOtherPlayerLabel, 150, 50, 400, 350, "Waiting for the other player");
+
+        Timer dotTimer = new javax.swing.Timer(500, new ActionListener() {
+            private int dots = 0;
+            public void actionPerformed(ActionEvent e) {
+                dots = (dots + 1) % 4;
+                waitingForOtherPlayerLabel.setText("Waiting for the other player" + ".".repeat(dots));
+            }
+        });
+
+        dotTimer.start();
     }
 
     private void roundFinishedPanel() {
         try {
-            client.opponentScoreThisRound=(int)client.receive();
-            client.opponentTotalScore+=client.opponentScoreThisRound;
+           opponentScoreThisRound = client.opponentScoreThisRound=(int)client.receive();
+           opponentUsername = (String)client.receive();
+           opponentTotalScore = client.opponentTotalScore+=client.opponentScoreThisRound;
         }
         catch (Exception e)
         {e.printStackTrace();}
+
         clearPanel();
-        setUpButton(readyButton,250,400,200,100,"Continue");
-        JLabel scoreLabel = new JLabel();
-        setUpLabel(scoreLabel, 150, 50, 400, 350, "Score this round: " + score);
+        add(title);
+        title.setText("Round finished!");
+        title.setBounds(150, 50, 400, 80);
+        title.setFont(new Font("Impact", Font.BOLD, 50));
+
+        JLabel ScoreText = new JLabel();
+        JLabel ScoreNumber = new JLabel();
+        JLabel opponentScoreText = new JLabel();
+        JLabel opponentScoreNumber = new JLabel();
+
+        setUpLabel(ScoreText, 150, 150, 400, 50, "Your Score this round");
+        setUpLabel(ScoreNumber, 150, 200, 400, 80, String.valueOf(score));
+        ScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
+
+        JLabel divider = new JLabel();
+        setUpLabel(divider, 50, 285, 600, 30, "- - - - - - - - - - - - - - - -");
+
+        setUpLabel(opponentScoreText, 150, 325, 400, 50, opponentUsername + "'s Score this round");
+        setUpLabel(opponentScoreNumber, 150, 375, 400, 80, String.valueOf(opponentScoreThisRound));
+        opponentScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
+
+        setUpButton(readyButton, 250, 500, 200, 80, "Continue");
     }
 
     private void checkAnswer(String answer) {
@@ -307,7 +341,8 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonC.setEnabled(false);
         buttonD.setEnabled(false);
 
-        Timer pauseTimer = new Timer(1500, new ActionListener() {
+
+        Timer pauseTimer = new javax.swing.Timer(1500, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e2) {
@@ -359,15 +394,34 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void finalScorePanel() {
         clearPanel();
+
         add(title);
         title.setText("Final score");
+        title.setBounds(150, 30, 400, 80);
+        title.setFont(new Font("Impact", Font.BOLD, 50));
 
-        add(quitButton);
-        quitButton.setBounds(250, 470, 200, 100);
+        JLabel finalScoreText = new JLabel();
+        JLabel finalScoreNumber = new JLabel();
+        JLabel finalText = new JLabel();
 
-        JLabel scoreField = new JLabel();
-        setUpLabel(scoreField, 200, 300, 300, 100, "Score: " + totalScore + "/" + totalQuestions);
+        setUpLabel(finalScoreText, 150, 120, 400, 50, "Your Final Score");
+        setUpLabel(finalScoreNumber, 150, 170, 400, 80, String.valueOf(totalScore));
+        finalScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
+        setUpLabel(finalText, 150, 250, 400, 30, "out of " + totalQuestions);
 
+        JLabel divider = new JLabel();
+        setUpLabel(divider, 50, 290, 600, 30, "- - - - - - - - - - - - - - - -");
+
+        JLabel opponentFinalScoreText = new JLabel();
+        JLabel opponentFinalScoreNumber = new JLabel();
+        JLabel opponentFinalText = new JLabel();
+
+        setUpLabel(opponentFinalScoreText, 150, 320, 400, 50, opponentUsername + "'s Final Score");
+        setUpLabel(opponentFinalScoreNumber, 150, 370, 400, 80, String.valueOf(opponentTotalScore));
+        opponentFinalScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
+        setUpLabel(opponentFinalText, 150, 450, 400, 30, "out of " + totalQuestions);
+
+        setUpButton(quitButton, 250, 530, 200, 80, "Quit");
     }
 
     private void setDefaultButtonColor() {
@@ -385,7 +439,7 @@ public class GamePanel extends JFrame implements ActionListener {
         add(button);
         button.setBounds(x, y, width, height);
         button.setBackground(new Color(211, 211, 211));
-        button.setFont(new Font("Impact", Font.BOLD, 30));
+        button.setFont(new Font("Impact", Font.BOLD, 27));
         button.setFocusable(false);
         button.setText(text);
     }
@@ -395,7 +449,7 @@ public class GamePanel extends JFrame implements ActionListener {
         add(textField);
         textField.setBounds(x, y, width, height);
         textField.setBackground(new Color(211, 211, 211));
-        textField.setFont(new Font("Impact", Font.BOLD, 30));
+        textField.setFont(new Font("Impact", Font.BOLD, 27));
         textField.setHorizontalAlignment(SwingConstants.CENTER);
         textField.setBorder(null);
         textField.setEditable(editable);
@@ -410,7 +464,7 @@ public class GamePanel extends JFrame implements ActionListener {
         label.setText(text);
         label.setBounds(x, y, width, height);
         label.setForeground(new Color(211, 211, 211));
-        label.setFont(new Font("Impact", Font.BOLD, 30));
+        label.setFont(new Font("Impact", Font.BOLD, 27));
         label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
