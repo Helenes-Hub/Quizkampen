@@ -8,7 +8,7 @@ public class Server {
     private final int port = 5050;
 
     public Server() {
-        //Stängs denna ServerSocket???
+
         try(ServerSocket serverS = new ServerSocket(port)) {
             while (true) {
 

@@ -8,6 +8,8 @@ import java.util.Properties;
 
 public class GameFlow extends Thread {
 
+    Thread player1Thread;
+    Thread player2Thread;
 
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
@@ -31,6 +33,7 @@ public class GameFlow extends Thread {
     private Player currentPlayer;
     private Object questions;
     private Boolean roundOver = false;
+    private Boolean gameIsOver = false;
 
     public GameFlow(Player player1, Player player2) {
         this.player1 = player1;
@@ -62,7 +65,7 @@ public class GameFlow extends Thread {
     }
 
     public void runPlayer1() {
-        Thread player1Thread = new Thread(() -> {
+        player1Thread = new Thread(() -> {
             Object message = null;
             player1.send(timer);
             player1.send(questionsPerRound);
@@ -75,11 +78,9 @@ public class GameFlow extends Thread {
                     message = player1.receive();
                     //properties(player1, message);
                     System.out.println("har mottagit 1 state: " + message);
-                    if (message.equals("QUIT")){
-                        player1.close();
-                        player2.close();
-                        System.exit(0);
-                    }
+                   // if (message.equals("QUIT")){
+                     //  endGame(gameIsOver);
+                    //}
 
                     properties(player1, message);
 
@@ -94,7 +95,7 @@ public class GameFlow extends Thread {
     }
 
     public void runPlayer2() {
-        Thread player2Thread = new Thread(() -> {
+        player2Thread = new Thread(() -> {
             Object message = null;
             player2.send(timer);
             player2.send(questionsPerRound);
@@ -107,11 +108,9 @@ public class GameFlow extends Thread {
                     //properties(player2, message);
                     System.out.println("har mottagit 2 state: " + message + " med nuvarande status: "+ player2.getCurrentState());
 
-                    if (message.equals("QUIT")){
-                        player1.close();
-                        player2.close();
-                        System.exit(0);
-                    }
+                   // if (message.equals("QUIT")){
+                     //   endGame(gameIsOver);
+                    //}
 
                     properties(player2, message);
 
@@ -130,6 +129,10 @@ public class GameFlow extends Thread {
         //player.send(INITIAL);
 
         synchronized (this) {
+            //if(player1.gameOver && player2.gameOver){
+              //  gameIsOver = true;
+            //}
+
             if (player1.getHasPlayedRound() && player2.getHasPlayedRound()) {
                 player1.setHasPlayedRound(false);
                 player2.setHasPlayedRound(false);
@@ -276,9 +279,19 @@ public class GameFlow extends Thread {
                     player.setCurrentState(WAITING);
                     player.send(WAITING);
                 }
+                break;
+                //case FINAL:
+                  //  if (message.equals("QUIT")) {
+                    //    player1.gameOver = true;
+                      //  player2.gameOver = true;
+                        //endGame(gameIsOver);
+                    //}
         }
     }
 
+    public void stopPlayer(){
+
+    }
         /*
         if (player.getCurrentState() == INITIAL) {
             player.send(INITIAL);
@@ -449,6 +462,16 @@ public class GameFlow extends Thread {
             questionArray[i][2].add(questions.get(i).getCorrectAnswer());
         }
         return questionArray;
+    }
+
+    public void endGame(Boolean gameIsOver){
+        if(gameIsOver){
+            player1.close();
+            player2.close();
+            player1Thread.interrupt();
+            player2Thread.interrupt();
+            System.exit(0);
+        }
     }
 
 }

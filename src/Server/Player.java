@@ -14,6 +14,7 @@ public class Player {
     String themeChoice;
     Boolean turnToChoose = false;
     Boolean hasPlayedRound = false;
+    protected Boolean gameOver = false;
     int pointsThisRound;
     int[] pointsAllRounds;
 
@@ -72,9 +73,11 @@ public class Player {
             System.out.println("tar emot från client: "+this.username+" "+ message.toString());
             return message;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            close();
+            System.out.println("Försöker stänga");
+            System.exit(0);
         }
+        return "FEL FEL FEL";
     }
 
     public void setOpponent(Player opponent) {
