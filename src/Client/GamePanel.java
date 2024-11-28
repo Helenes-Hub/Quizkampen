@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,8 +168,6 @@ public class GamePanel extends JFrame implements ActionListener {
         clearPanel();
         setUpLabel(title, 150, 50, 400, 100, "Quiz");
         title.setFont(new Font("Impact", Font.BOLD, 100));
-        title.setBackground(new Color(0, 50, 76));
-        title.setForeground(new Color(211, 211, 211));
         title.setBounds(150, 50, 400, 100);
 
         playButton.addActionListener(this);
