@@ -1,5 +1,4 @@
 package Client;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -156,6 +155,19 @@ public class GamePanel extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setVisible(true);
         getContentPane().setBackground(new Color(0, 50, 76));
+
+        JLabel searchingForPlayerLabel = new JLabel();
+        setUpLabel(searchingForPlayerLabel, 150, 50, 400, 350, "Searching for another player");
+
+        Timer dotTimer2 = new javax.swing.Timer(500, new ActionListener() {
+            private int dots = 0;
+            public void actionPerformed(ActionEvent e) {
+                dots = (dots + 1) % 4;
+                searchingForPlayerLabel.setText("Searching for another player" + ".".repeat(dots));
+            }
+        });
+
+        dotTimer2.start();
     }
 
     private void mainMenuPanel() {
@@ -166,8 +178,6 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setForeground(new Color(211, 211, 211));
         title.setBounds(150, 50, 400, 100);
 
-        add(playButton);
-        add(quitButton);
         playButton.addActionListener(this);
         quitButton.addActionListener(this);
 
@@ -181,7 +191,6 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpLabel(userNameLabel, 150, 50, 400, 350, "Enter your username");
         setUpTextField(userNameField, 150, 275, 400, 50, "", true);
         setUpButton(enterNameButton, 250, 350, 200, 50, "Enter");
-
     }
 
     private void showCategoriesPanel() {
@@ -194,7 +203,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
         setUpButton(category1Button, 100, 300, 200, 100, "Animals");
         setUpButton(category2Button, 400, 300, 200, 100, "Science");
-
     }
 
     private void startGamePanel() {
@@ -205,7 +213,6 @@ public class GamePanel extends JFrame implements ActionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         currentQuestionIndex = 0;
         score = 0;
@@ -249,7 +256,6 @@ public class GamePanel extends JFrame implements ActionListener {
             }
         });
         nextQuestion();
-
     }
 
 
@@ -375,7 +381,6 @@ public class GamePanel extends JFrame implements ActionListener {
         String correctAnswer = String.valueOf(questionArray[currentQuestionIndex][2].get(0));
         this.correctAnswer = correctAnswer;
 
-
         setDefaultButtonColor();
         title.setText("Question " + (currentQuestionIndex + 1));
         question.setText(currentQuestion);
@@ -383,7 +388,6 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
         buttonD.setText(options.get(3));
-
 
         timeLeft = timeFromServer;
         timerBar.setValue(timeFromServer);
