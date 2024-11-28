@@ -7,7 +7,6 @@ import java.net.Socket;
 public class Client {
 
     private final int port = 5050;
-    private InetAddress address = InetAddress.getLoopbackAddress();
     private Socket socketToServer;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -59,5 +58,21 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getOpponentScoreThisRound() {
+        return opponentScoreThisRound;
+    }
+
+    public void setOpponentScoreThisRound(int opponentScoreThisRound) {
+        this.opponentScoreThisRound = opponentScoreThisRound;
+    }
+
+    public int getOpponentTotalScore() {
+        return opponentTotalScore;
+    }
+
+    public void setOpponentTotalScore(int opponentTotalScore) {
+        this.opponentTotalScore = opponentTotalScore;
     }
 }

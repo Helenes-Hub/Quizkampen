@@ -39,12 +39,9 @@ public class GamePanel extends JFrame implements ActionListener {
     private double timeLeft;
     int timeFromServer;
 
-
     private String currentCategory;
     private int currentQuestionIndex;
     private int score;
-    private int opponentScoreThisRound;
-    private int opponentTotalScore;
     private int totalScore;
     private int questionsPerRound;
     private int totalQuestions;
@@ -54,9 +51,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private String correctAnswer;
     private String opponentUsername;
 
-
     private final Client client = new Client();
-
 
     public GamePanel() {
         setUpFrame();
@@ -181,7 +176,6 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpLabel(userNameLabel, 150, 50, 400, 350, "Enter your username");
         setUpTextField(userNameField, 150, 275, 400, 50, "", true);
         setUpButton(enterNameButton, 250, 350, 200, 50, "Enter");
-
     }
 
     private void showCategoriesPanel() {
@@ -194,7 +188,6 @@ public class GamePanel extends JFrame implements ActionListener {
 
         setUpButton(category1Button, 100, 300, 200, 100, "Animals");
         setUpButton(category2Button, 400, 300, 200, 100, "Science");
-
     }
 
     private void startGamePanel() {
@@ -205,7 +198,6 @@ public class GamePanel extends JFrame implements ActionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         currentQuestionIndex = 0;
         score = 0;
@@ -249,9 +241,7 @@ public class GamePanel extends JFrame implements ActionListener {
             }
         });
         nextQuestion();
-
     }
-
 
     private void waitingForOtherPlayerPanel() {
         clearPanel();
@@ -266,15 +256,14 @@ public class GamePanel extends JFrame implements ActionListener {
                 waitingForOtherPlayerLabel.setText("Waiting for the other player" + ".".repeat(dots));
             }
         });
-
         dotTimer.start();
     }
 
     private void roundFinishedPanel() {
         try {
-            opponentScoreThisRound = client.opponentScoreThisRound = (int) client.receive();
+            client.setOpponentScoreThisRound((int) client.receive());
             opponentUsername = (String) client.receive();
-            opponentTotalScore = client.opponentTotalScore += client.opponentScoreThisRound;
+            client.setOpponentTotalScore(client.getOpponentTotalScore() + client.getOpponentScoreThisRound());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -298,7 +287,7 @@ public class GamePanel extends JFrame implements ActionListener {
         setUpLabel(divider, 50, 285, 600, 30, "- - - - - - - - - - - - - - - -");
 
         setUpLabel(opponentScoreText, 150, 325, 400, 50, opponentUsername + "'s Score this round");
-        setUpLabel(opponentScoreNumber, 150, 375, 400, 80, String.valueOf(opponentScoreThisRound));
+        setUpLabel(opponentScoreNumber, 150, 375, 400, 80, String.valueOf(client.getOpponentScoreThisRound()));
         opponentScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
 
         setUpButton(readyButton, 250, 500, 200, 80, "Continue");
@@ -321,7 +310,6 @@ public class GamePanel extends JFrame implements ActionListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -340,7 +328,6 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonC.setEnabled(false);
         buttonD.setEnabled(false);
 
-
         Timer pauseTimer = new javax.swing.Timer(1500, new ActionListener() {
 
             @Override
@@ -356,7 +343,6 @@ public class GamePanel extends JFrame implements ActionListener {
                 checkAnswer(answer);
             }
         });
-
         pauseTimer.setRepeats(false);
         pauseTimer.start();
     }
@@ -375,7 +361,6 @@ public class GamePanel extends JFrame implements ActionListener {
         String correctAnswer = String.valueOf(questionArray[currentQuestionIndex][2].get(0));
         this.correctAnswer = correctAnswer;
 
-
         setDefaultButtonColor();
         title.setText("Question " + (currentQuestionIndex + 1));
         question.setText(currentQuestion);
@@ -383,7 +368,6 @@ public class GamePanel extends JFrame implements ActionListener {
         buttonB.setText(options.get(1));
         buttonC.setText(options.get(2));
         buttonD.setText(options.get(3));
-
 
         timeLeft = timeFromServer;
         timerBar.setValue(timeFromServer);
@@ -394,14 +378,14 @@ public class GamePanel extends JFrame implements ActionListener {
     private void finalScorePanel() {
         clearPanel();
 
-        String win = "You won!";
-        String lose = "You lost...";
-        String draw = "It's a draw!";
+        final String win = "You won!";
+        final String lose = "You lost...";
+        final String draw = "It's a draw!";
 
         add(title);
-        if (totalScore > opponentTotalScore) {
+        if (totalScore > client.getOpponentTotalScore()) {
             title.setText(win);
-        } else if (totalScore == opponentTotalScore) {
+        } else if (totalScore == client.getOpponentTotalScore()) {
             title.setText(draw);
         } else {
             title.setText(lose);
@@ -427,7 +411,7 @@ public class GamePanel extends JFrame implements ActionListener {
         final JLabel opponentFinalText = new JLabel();
 
         setUpLabel(opponentFinalScoreText, 150, 320, 400, 50, opponentUsername + "'s Final Score");
-        setUpLabel(opponentFinalScoreNumber, 150, 370, 400, 80, String.valueOf(opponentTotalScore));
+        setUpLabel(opponentFinalScoreNumber, 150, 370, 400, 80, String.valueOf(client.getOpponentTotalScore()));
         opponentFinalScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
         setUpLabel(opponentFinalText, 150, 450, 400, 30, "out of " + totalQuestions);
 
