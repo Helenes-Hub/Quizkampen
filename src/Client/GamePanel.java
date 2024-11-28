@@ -155,6 +155,19 @@ public class GamePanel extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setVisible(true);
         getContentPane().setBackground(new Color(0, 50, 76));
+
+        JLabel searchingForPlayerLabel = new JLabel();
+        setUpLabel(searchingForPlayerLabel, 150, 50, 400, 350, "Searching for another player");
+
+        Timer dotTimer2 = new javax.swing.Timer(500, new ActionListener() {
+            private int dots = 0;
+            public void actionPerformed(ActionEvent e) {
+                dots = (dots + 1) % 4;
+                searchingForPlayerLabel.setText("Searching for another player" + ".".repeat(dots));
+            }
+        });
+
+        dotTimer2.start();
     }
 
     private void mainMenuPanel() {
