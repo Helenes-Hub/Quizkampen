@@ -5,44 +5,19 @@ import java.net.Socket;
 
 public class Player {
 
-    ObjectInputStream in;
-    ObjectOutputStream out;
-    Player opponent;
-    Socket socket;
-    String username;
-    String themeChoice;
-    Boolean turnToChoose = false;
-    Boolean hasPlayedRound = false;
-    protected Boolean gameOver = false;
-    int pointsThisRound;
-    int[] pointsAllRounds;
-    int totalPoints;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private Player opponent;
+    private Socket socket;
+    private String username;
+    private String themeChoice;
+    private Boolean turnToChoose = false;
+    private Boolean hasPlayedRound = false;
+    private Boolean gameOver = false;
+    private int pointsThisRound;
+    private int totalPoints;
 
-    private final int INITIAL = 0;
-    private final int ENTER_USERNAME = 1;
-    private final int CHOOSE_CATEGORY = 2;
-    private final int QUIZZING = 3;
-    private final int WAITING = 4;
-    private final int SHOW_SCORE_THIS_ROUND = 5;
-    private final int FINAL = 6;
-    private final int WAITING_FOR_SCORE = 7;
     private int currentState = 0;
-
-    public Boolean getHasPlayedRound() {
-        return hasPlayedRound;
-    }
-
-    public void setHasPlayedRound(Boolean hasPlayedRound) {
-        this.hasPlayedRound = hasPlayedRound;
-    }
-
-    public Boolean getTurnToChoose() {
-        return turnToChoose;
-    }
-
-    public void setTurnToChoose(Boolean turnToChoose) {
-        this.turnToChoose = turnToChoose;
-    }
 
     public Player(Socket socket) {
         this.socket = socket;
@@ -86,68 +61,60 @@ public class Player {
         return opponent;
     }
 
-    public void setRounds(int rounds) {
-        pointsAllRounds = new int[rounds];
-    }
-
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getThemeChoice() {
         return themeChoice;
     }
 
-    public void addPointsThisRound(int roundNumber, int pointsThisRound) {
-        pointsAllRounds[roundNumber] = pointsThisRound;
+    public void setThemeChoice(String themeChoice) {
+        this.themeChoice = themeChoice;
+    }
+
+    public Boolean getHasPlayedRound() {
+        return hasPlayedRound;
+    }
+
+    public void setHasPlayedRound(Boolean hasPlayedRound) {
+        this.hasPlayedRound = hasPlayedRound;
+    }
+
+    public Boolean getTurnToChoose() {
+        return turnToChoose;
+    }
+
+    public void setTurnToChoose(Boolean turnToChoose) {
+        this.turnToChoose = turnToChoose;
+    }
+
+    public Boolean getGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(Boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
     public int getPointsThisRound() {
         return pointsThisRound;
     }
 
-    public int[] getPointsAllRounds() {
-        return pointsAllRounds;
+    public void setPointsThisRound(int pointsThisRound) {
+        this.pointsThisRound = pointsThisRound;
     }
 
-    public int getTotalScore() {
-        int totalScore = 0;
-        for (int points : pointsAllRounds) {
-            totalScore = totalScore + points;
-        }
-        return totalScore;
+    public int getTotalPoints() {
+        return totalPoints;
     }
 
-    public int getINITIAL() {
-        return INITIAL;
-    }
-
-    public int getENTER_USERNAME() {
-        return ENTER_USERNAME;
-    }
-
-    public int getCHOOSE_CATEGORY() {
-        return CHOOSE_CATEGORY;
-    }
-
-    public int getQUIZZING() {
-        return QUIZZING;
-    }
-
-    public int getWAITING() {
-        return WAITING;
-    }
-
-    public int getSHOW_SCORE_THIS_ROUND() {
-        return SHOW_SCORE_THIS_ROUND;
-    }
-
-    public int getFINAL() {
-        return FINAL;
-    }
-
-    public int getWAITING_FOR_SCORE() {
-        return WAITING_FOR_SCORE;
+    public void setTotalPoints(int totalPoints) {
+        this.totalPoints = totalPoints;
     }
 
     public int getCurrentState() {
