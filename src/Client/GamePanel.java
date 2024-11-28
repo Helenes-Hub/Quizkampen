@@ -21,19 +21,19 @@ public class GamePanel extends JFrame implements ActionListener {
     private int currentState = 0;
 
 
-    private JLabel title = new JLabel();
-    private JLabel question = new JLabel();
-    private JTextField userNameField = new JTextField();
-    private JButton playButton = new JButton();
-    private JButton quitButton = new JButton();
-    private JButton enterNameButton = new JButton();
-    private JButton category1Button = new JButton();
-    private JButton category2Button = new JButton();
-    private JButton buttonA = new JButton();
-    private JButton buttonB = new JButton();
-    private JButton buttonC = new JButton();
-    private JButton buttonD = new JButton();
-    private JButton readyButton = new JButton();
+    private final JLabel title = new JLabel();
+    private final JLabel question = new JLabel();
+    private final JTextField userNameField = new JTextField();
+    private final JButton playButton = new JButton();
+    private final JButton quitButton = new JButton();
+    private final JButton enterNameButton = new JButton();
+    private final JButton category1Button = new JButton();
+    private final JButton category2Button = new JButton();
+    private final JButton buttonA = new JButton();
+    private final JButton buttonB = new JButton();
+    private final JButton buttonC = new JButton();
+    private final JButton buttonD = new JButton();
+    private final JButton readyButton = new JButton();
     private Timer questionTimer;
     private JProgressBar timerBar;
     private double timeLeft;
@@ -55,7 +55,7 @@ public class GamePanel extends JFrame implements ActionListener {
     private String opponentUsername;
 
 
-    Client client = new Client();
+    private final Client client = new Client();
 
 
     public GamePanel() {
@@ -177,7 +177,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void enterUserNamePanel() {
         clearPanel();
-        JLabel userNameLabel = new JLabel();
+        final JLabel userNameLabel = new JLabel();
         setUpLabel(userNameLabel, 150, 50, 400, 350, "Enter your username");
         setUpTextField(userNameField, 150, 275, 400, 50, "", true);
         setUpButton(enterNameButton, 250, 350, 200, 50, "Enter");
@@ -255,7 +255,7 @@ public class GamePanel extends JFrame implements ActionListener {
 
     private void waitingForOtherPlayerPanel() {
         clearPanel();
-        JLabel waitingForOtherPlayerLabel = new JLabel();
+        final JLabel waitingForOtherPlayerLabel = new JLabel();
         setUpLabel(waitingForOtherPlayerLabel, 150, 50, 400, 350, "Waiting for the other player");
 
         Timer dotTimer = new javax.swing.Timer(500, new ActionListener() {
@@ -285,16 +285,16 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setBounds(150, 50, 400, 80);
         title.setFont(new Font("Impact", Font.BOLD, 50));
 
-        JLabel ScoreText = new JLabel();
-        JLabel ScoreNumber = new JLabel();
-        JLabel opponentScoreText = new JLabel();
-        JLabel opponentScoreNumber = new JLabel();
+        final JLabel ScoreText = new JLabel();
+        final JLabel ScoreNumber = new JLabel();
+        final JLabel opponentScoreText = new JLabel();
+        final JLabel opponentScoreNumber = new JLabel();
 
         setUpLabel(ScoreText, 150, 150, 400, 50, "Your Score this round");
         setUpLabel(ScoreNumber, 150, 200, 400, 80, String.valueOf(score));
         ScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
 
-        JLabel divider = new JLabel();
+        final JLabel divider = new JLabel();
         setUpLabel(divider, 50, 285, 600, 30, "- - - - - - - - - - - - - - - -");
 
         setUpLabel(opponentScoreText, 150, 325, 400, 50, opponentUsername + "'s Score this round");
@@ -410,21 +410,21 @@ public class GamePanel extends JFrame implements ActionListener {
         title.setBounds(150, 30, 400, 80);
         title.setFont(new Font("Impact", Font.BOLD, 50));
 
-        JLabel finalScoreText = new JLabel();
-        JLabel finalScoreNumber = new JLabel();
-        JLabel finalText = new JLabel();
+        final JLabel finalScoreText = new JLabel();
+        final JLabel finalScoreNumber = new JLabel();
+        final JLabel finalText = new JLabel();
 
         setUpLabel(finalScoreText, 150, 120, 400, 50, "Your Final Score");
         setUpLabel(finalScoreNumber, 150, 170, 400, 80, String.valueOf(totalScore));
         finalScoreNumber.setFont(new Font("Impact", Font.BOLD, 50));
         setUpLabel(finalText, 150, 250, 400, 30, "out of " + totalQuestions);
 
-        JLabel divider = new JLabel();
+        final JLabel divider = new JLabel();
         setUpLabel(divider, 50, 290, 600, 30, "- - - - - - - - - - - - - - - -");
 
-        JLabel opponentFinalScoreText = new JLabel();
-        JLabel opponentFinalScoreNumber = new JLabel();
-        JLabel opponentFinalText = new JLabel();
+        final JLabel opponentFinalScoreText = new JLabel();
+        final JLabel opponentFinalScoreNumber = new JLabel();
+        final JLabel opponentFinalText = new JLabel();
 
         setUpLabel(opponentFinalScoreText, 150, 320, 400, 50, opponentUsername + "'s Final Score");
         setUpLabel(opponentFinalScoreNumber, 150, 370, 400, 80, String.valueOf(opponentTotalScore));

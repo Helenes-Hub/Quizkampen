@@ -8,14 +8,12 @@ public class Client {
 
     private final int port = 5050;
     private InetAddress address = InetAddress.getLoopbackAddress();
-    Socket socketToServer;
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    private Socket socketToServer;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    int opponentScoreThisRound;
-    int opponentTotalScore;
-    int score;
-    int totalScore;
+    protected int opponentScoreThisRound;
+    protected int opponentTotalScore;
 
     public Client() {
         try {

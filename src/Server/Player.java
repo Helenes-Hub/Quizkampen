@@ -5,14 +5,14 @@ import java.net.Socket;
 
 public class Player {
 
-    ObjectInputStream in;
-    ObjectOutputStream out;
-    Player opponent;
-    Socket socket;
-    String username;
-    String themeChoice;
-    Boolean turnToChoose = false;
-    Boolean hasPlayedRound = false;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    protected Player opponent;
+    private Socket socket;
+    protected String username;
+    protected String themeChoice;
+    protected Boolean turnToChoose = false;
+    protected Boolean hasPlayedRound = false;
     protected Boolean gameOver = false;
     int pointsThisRound;
     int[] pointsAllRounds;

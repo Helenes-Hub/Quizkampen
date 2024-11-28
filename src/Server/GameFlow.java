@@ -8,8 +8,8 @@ import java.util.Properties;
 
 public class GameFlow extends Thread {
 
-    Thread player1Thread;
-    Thread player2Thread;
+    private Thread player1Thread;
+    private Thread player2Thread;
 
     private final int INITIAL = 0;
     private final int ENTER_USERNAME = 1;
